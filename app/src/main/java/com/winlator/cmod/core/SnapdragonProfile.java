@@ -68,12 +68,65 @@ public final class SnapdragonProfile {
         Code decompiled incorrectly, please refer to instructions dump.
         To view partially-correct add '--show-bad-code' argument
     */
-    public static com.winlator.cmod.core.SnapdragonProfile resolve(android.content.Context r28) {
-        /*
-            Method dump skipped, instruction units count: 382
-            To view this dump add '--comments-level debug' option
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.winlator.cmod.core.SnapdragonProfile.resolve(android.content.Context):com.winlator.cmod.core.SnapdragonProfile");
+    public static SnapdragonProfile resolve(Context context) {
+        String soc = socModel();
+        Detected detected = detect(soc);
+        Tier tier = detected.tier;
+
+        // Default quality tier derived from detected SoC
+        String autoQualityId;
+        switch (tier) {
+            case FLAGSHIP: autoQualityId = "flagship"; break;
+            case MID:      autoQualityId = "mid";      break;
+            default:       autoQualityId = "legacy";   break;
+        }
+
+        // Manual overrides saved from the launcher spinners
+        String driverOverride  = MhfDevicePrefs.getDriverOverride(context);
+        String qualityOverride = MhfDevicePrefs.getQualityOverride(context);
+
+        boolean driverOverridden  = driverOverride  != null
+                && !driverOverride.isEmpty()
+                && !"auto".equalsIgnoreCase(driverOverride);
+        boolean qualityOverridden = qualityOverride != null
+                && !qualityOverride.isEmpty()
+                && !"auto".equalsIgnoreCase(qualityOverride);
+
+        String driverId  = driverOverridden  ? driverOverride  : detected.driverId;
+        String qualityId = qualityOverridden ? qualityOverride : autoQualityId;
+
+        // Frame rate and sharpness per quality tier
+        int frameRate = 35;
+        int sharpness;
+        switch (qualityId) {
+            case "flagship": sharpness = 100; break;
+            case "mid":      sharpness = 85;  break;
+            default:         sharpness = 75;  break;
+        }
+
+        String box64Preset = "PERFORMANCE";
+        String fexPreset   = "INTERMEDIATE";
+
+        // Form factor & screen size cap (panelLandscape unknown here; detected later)
+        String formFactor    = detectFormFactor(context, null);
+        String screenSizeCap = resolveScreenSize(formFactor, null);
+
+        return new SnapdragonProfile(
+                soc,
+                detected.marketing,
+                tier,
+                detected.driverId,
+                driverId,
+                qualityId,
+                frameRate,
+                sharpness,
+                box64Preset,
+                fexPreset,
+                screenSizeCap,
+                formFactor,
+                driverOverridden,
+                qualityOverridden
+        );
     }
 
     public boolean isTablet() {
