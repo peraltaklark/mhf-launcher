@@ -633,7 +633,7 @@ public class BootActivity extends AppCompatActivity {
         intent.putExtra("container_id", container.id);
         intent.putExtra("shortcut_path", desktopFile.getAbsolutePath());
         intent.putExtra("shortcut_name", CONTAINER_NAME);
-        intent.putExtra("re7_boot_cover_ms", 10000L);
+        intent.putExtra("mhf_boot_cover_ms", 10000L);
         startActivity(intent);
         overridePendingTransition(0, 0);
         finish();

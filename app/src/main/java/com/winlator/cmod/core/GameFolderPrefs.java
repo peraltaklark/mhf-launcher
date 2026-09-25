@@ -48,7 +48,7 @@ public final class GameFolderPrefs {
         if (picked == null || !picked.isDirectory()) {
             return null;
         }
-        File named = new File(picked, "re7");
+        File named = new File(picked, "mhf");
         if (isGameDir(named)) {
             return named;
         }

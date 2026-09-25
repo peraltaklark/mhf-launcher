@@ -13,7 +13,7 @@ public final class SnapdragonProfile {
     private static final float PHONE_MIN_AR = 1.9f;
     public static final String PHONE_SCREEN = "1600x720";
     public static final int TABLET_HEIGHT = 800;
-    private static final String TAG = "RE7Soc";
+    private static final String TAG = "MHFSoc";
     public final String autoDriverId;
     public final String box64Preset;
     public final String driverId;
