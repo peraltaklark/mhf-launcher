@@ -320,36 +320,16 @@ public abstract class ImageFsInstaller {
         Code decompiled incorrectly, please refer to instructions dump.
         To view partially-correct add '--show-bad-code' argument
     */
-    private static void clearRootDir(java.io.File r6) {
-        /*
-            boolean r0 = r6.isDirectory()
-            if (r0 == 0) goto L2c
-            java.io.File[] r0 = r6.listFiles()
-            if (r0 == 0) goto L2b
-            int r1 = r0.length
-            r2 = 0
-        Le:
-            if (r2 >= r1) goto L2b
-            r3 = r0[r2]
-            boolean r4 = r3.isDirectory()
-            if (r4 == 0) goto L25
-            java.lang.String r4 = r3.getName()
-            java.lang.String r5 = "home"
-            boolean r5 = r4.equals(r5)
-            if (r5 == 0) goto L25
-            goto L28
-        L25:
-            com.winlator.cmod.core.FileUtils.delete(r3)
-        L28:
-            int r2 = r2 + 1
-            goto Le
-        L2b:
-            goto L2f
-        L2c:
-            r6.mkdirs()
-        L2f:
-            return
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.winlator.cmod.xenvironment.ImageFsInstaller.clearRootDir(java.io.File):void");
+    private static void clearRootDir(File r6) {
+        if (r6 == null) return;
+        if (!r6.exists() || !r6.isDirectory()) {
+            r6.mkdirs();
+            return;
+        }
+        File[] children = r6.listFiles();
+        if (children == null) return;
+        for (File child : children) {
+            FileUtils.delete(child);
+        }
     }
 }
