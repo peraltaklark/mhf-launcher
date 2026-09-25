@@ -13,7 +13,6 @@ buildscript {
         // Adjust Gradle plugin versions if needed
         classpath 'com.android.tools.build:gradle:8.8.0'
     
-    implementation 'androidx.autofill:autofill:1.1.0'
 }
 
 }
@@ -235,4 +234,6 @@ dependencies {
     implementation 'in.dragonbra:javasteam-depotdownloader:1.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     testImplementation 'junit:junit:4.13.2'
+
+    implementation 'androidx.autofill:autofill:1.1.0'
 }
