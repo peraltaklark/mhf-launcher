@@ -1,5 +1,8 @@
 package com.winlator.cmod;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import com.winlator.cmod.core.WineThemeManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -92,6 +95,7 @@ public class BootActivity extends AppCompatActivity {
         refreshFolderLabel();
         refreshProfileUi();
         Log.i(TAG, "boot start; soc=" + SnapdragonProfile.socModel() + " sdk=" + Build.VERSION.SDK_INT);
+        installBootWallpaper();
         startPermissionFlow();
     }
 
@@ -765,4 +769,29 @@ public class BootActivity extends AppCompatActivity {
         Log.w(TAG, message);
         Toast.makeText(this, message, 1).show();
     }
+
+    /** Copy the launcher boot cover into Wine's wallpaper slot
+     *  so the user sees it on the black Wine desktop while MHF boots. */
+    private void installBootWallpaper() {
+        try {
+            java.io.File wallpaperFile = WineThemeManager.getUserWallpaperFile(this);
+            if (wallpaperFile == null) return;
+            java.io.File parent = wallpaperFile.getParentFile();
+            if (parent != null && !parent.isDirectory()) parent.mkdirs();
+
+            Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.mhf_boot_cover);
+            if (bmp == null) {
+                Log.w(TAG, "boot cover decode returned null");
+                return;
+            }
+            try (FileOutputStream out = new FileOutputStream(wallpaperFile)) {
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+            }
+            bmp.recycle();
+            Log.i(TAG, "Boot wallpaper written: " + wallpaperFile.getAbsolutePath());
+        } catch (Throwable t) {
+            Log.w(TAG, "installBootWallpaper failed: " + t);
+        }
+    }
+
 }
