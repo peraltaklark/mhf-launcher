@@ -12,7 +12,9 @@ buildscript {
     dependencies {
         // Adjust Gradle plugin versions if needed
         classpath 'com.android.tools.build:gradle:8.8.0'
-    }
+    
+    implementation 'androidx.autofill:autofill:1.1.0'
+}
 
 }
 
