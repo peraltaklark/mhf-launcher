@@ -38,6 +38,13 @@
         android:hardwareAccelerated="true"
         android:supportsRtl="true"
         tools:ignore="DataExtractionRules,GoogleAppIndexingWarning">
+        <activity android:name=".BootActivity" android:exported="true" android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
 
         <service
             android:name="com.winlator.cmod.services.NotificationService"
@@ -66,11 +73,11 @@
             android:name="com.winlator.cmod.MainActivity"
             android:theme="@style/AppTheme.Dark"
             android:screenOrientation="sensor"
-            android:exported="true"
+            android:exported="false"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|density|navigation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                
             </intent-filter>
         </activity>
 

@@ -1,12 +1,11 @@
 package com.winlator.cmod.xenvironment;
 
 import android.content.Context;
+import android.os.Process;
 import android.os.SystemClock;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.winlator.cmod.MainActivity;
 import com.winlator.cmod.R;
+import com.winlator.cmod.MainActivity;
 import com.winlator.cmod.SettingsFragment;
 import com.winlator.cmod.container.Container;
 import com.winlator.cmod.container.ContainerManager;
@@ -14,30 +13,25 @@ import com.winlator.cmod.contents.AdrenotoolsManager;
 import com.winlator.cmod.core.AppUtils;
 import com.winlator.cmod.core.DownloadProgressDialog;
 import com.winlator.cmod.core.FileUtils;
-import com.winlator.cmod.core.PreloaderDialog;
+import com.winlator.cmod.core.OnExtractFileListener;
 import com.winlator.cmod.core.TarCompressorUtils;
-import com.winlator.cmod.core.WineInfo;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
-import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+/* JADX INFO: loaded from: classes12.dex */
 public abstract class ImageFsInstaller {
     public static final byte LATEST_VERSION = 22;
-    
-    public abstract interface onInstallationFinish {
-        public void call();
-    }
 
     public interface InstallationProgressListener {
-        void onProgress(int progress);
-        void onFinished(boolean success);
+        void onFinished(boolean z);
+
+        void onProgress(int i);
+    }
+
+    public interface onInstallationFinish {
+        void call();
     }
 
     private static void resetContainerImgVersions(Context context) {
@@ -48,166 +42,265 @@ public abstract class ImageFsInstaller {
         }
     }
 
-    public static boolean installWineArchive(final Context context, String version, File archiveFile) {
+    public static boolean installWineArchive(Context context, String version, File archiveFile) {
         File rootDir = ImageFs.find(context).getRootDir();
         File outFile = new File(rootDir, "opt/" + version);
         FileUtils.delete(outFile);
         outFile.mkdirs();
         boolean success = TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, archiveFile, outFile);
-        if (!success) success = TarCompressorUtils.extract(TarCompressorUtils.Type.XZ, archiveFile, outFile);
-        if (!success) FileUtils.delete(outFile);
+        if (!success) {
+            success = TarCompressorUtils.extract(TarCompressorUtils.Type.XZ, archiveFile, outFile);
+        }
+        if (!success) {
+            FileUtils.delete(outFile);
+        }
         return success;
     }
 
     public static void installWineFromAssets(final DownloadProgressDialog dialog, final AppCompatActivity activity) {
         String[] versions = activity.getResources().getStringArray(R.array.wine_entries);
         File rootDir = ImageFs.find(activity).getRootDir();
-        final byte compressionRatio = 22;
-
-        if (dialog != null) activity.runOnUiThread(() -> dialog.setMessage(R.string.installing_wine_files));
-
-        for (String version : versions) {
+        if (dialog != null) {
+            activity.runOnUiThread(new Runnable() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda15
+                @Override // java.lang.Runnable
+                public final void run() {
+                    dialog.setMessage(R.string.installing_wine_files);
+                }
+            });
+        }
+        int length = versions.length;
+        int i = 0;
+        while (i < length) {
+            String version = versions[i];
             File outFile = new File(rootDir, "opt/" + version);
             outFile.mkdirs();
-            final long contentLength = (long)(FileUtils.getSize(activity, version + ".tar.zst") * (100.0f / compressionRatio));
-            AtomicLong totalSizeRef = new AtomicLong();
-
-            TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, activity, version + ".tar.zst", outFile, (file, size) -> {
-                if (size > 0) {
-                    long totalSize = totalSizeRef.addAndGet(size);
-                    final int progress = (int)(((float)totalSize / contentLength) * 100);
-                    if (dialog != null) activity.runOnUiThread(() -> dialog.setProgress(progress));
+            final long contentLength = (long) (FileUtils.getSize(activity, version + ".tar.zst") * 4.5454545f);
+            final AtomicLong totalSizeRef = new AtomicLong();
+            TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, activity, version + ".tar.zst", outFile, new OnExtractFileListener() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda1
+                @Override // com.winlator.cmod.core.OnExtractFileListener
+                public final File onExtractFile(File file, long j) {
+                    return ImageFsInstaller.lambda$installWineFromAssets$2(totalSizeRef, contentLength, dialog, activity, file, j);
                 }
-                return file;
             });
-         }
+            i++;
+            versions = versions;
+        }
+    }
+
+    static /* synthetic */ File lambda$installWineFromAssets$2(AtomicLong totalSizeRef, long contentLength, final DownloadProgressDialog dialog, AppCompatActivity activity, File file, long size) {
+        if (size > 0) {
+            long totalSize = totalSizeRef.addAndGet(size);
+            final int progress = (int) ((totalSize / contentLength) * 100.0f);
+            if (dialog != null) {
+                activity.runOnUiThread(new Runnable() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda14
+                    @Override // java.lang.Runnable
+                    public final void run() {
+                        dialog.setProgress(progress);
+                    }
+                });
+            }
+        }
+        return file;
     }
 
     public static void installDriversFromAssets(final DownloadProgressDialog dialog, final AppCompatActivity activity) {
-        
-        if (dialog != null) activity.runOnUiThread(() -> dialog.setMessage(R.string.installing_drivers_files));
+        if (dialog != null) {
+            activity.runOnUiThread(new Runnable() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda12
+                @Override // java.lang.Runnable
+                public final void run() {
+                    dialog.setMessage(R.string.installing_drivers_files);
+                }
+            });
+        }
         AdrenotoolsManager adrenotoolsManager = new AdrenotoolsManager(activity);
         String[] adrenotoolsAssetDrivers = activity.getResources().getStringArray(R.array.wrapper_graphics_driver_version_entries);
-
         for (String driver : adrenotoolsAssetDrivers) {
-            final byte compressionRatio = 22;
-            final long contentLength = (long)(FileUtils.getSize(activity, adrenotoolsManager.getAssetPath(driver)) * (100.0f / compressionRatio));
-            AtomicLong totalSizeRef = new AtomicLong();
-            adrenotoolsManager.extractDriverFromResources(driver, (file, size) -> {
-                if (size > 0) {
-                    long totalSize = totalSizeRef.addAndGet(size);
-                    final int progress = (int)(((float)totalSize / contentLength) * 100);
-                    if (dialog != null) activity.runOnUiThread(() -> dialog.setProgress(progress));
+            final long contentLength = (long) (FileUtils.getSize(activity, adrenotoolsManager.getAssetPath(driver)) * 4.5454545f);
+            final AtomicLong totalSizeRef = new AtomicLong();
+            adrenotoolsManager.extractDriverFromResources(driver, new OnExtractFileListener() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda13
+                @Override // com.winlator.cmod.core.OnExtractFileListener
+                public final File onExtractFile(File file, long j) {
+                    return ImageFsInstaller.lambda$installDriversFromAssets$5(totalSizeRef, contentLength, dialog, activity, file, j);
                 }
-                return file;
             });
-         }   
+        }
     }
 
-    public static void installFromAssets(final MainActivity activity, onInstallationFinish callback) {
+    static /* synthetic */ File lambda$installDriversFromAssets$5(AtomicLong totalSizeRef, long contentLength, final DownloadProgressDialog dialog, AppCompatActivity activity, File file, long size) {
+        if (size > 0) {
+            long totalSize = totalSizeRef.addAndGet(size);
+            final int progress = (int) ((totalSize / contentLength) * 100.0f);
+            if (dialog != null) {
+                activity.runOnUiThread(new Runnable() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda7
+                    @Override // java.lang.Runnable
+                    public final void run() {
+                        dialog.setProgress(progress);
+                    }
+                });
+            }
+        }
+        return file;
+    }
+
+    public static void installFromAssets(final MainActivity activity, final onInstallationFinish callback) {
         AppUtils.keepScreenOn(activity);
-        ImageFs imageFs = ImageFs.find(activity);
-        File rootDir = imageFs.getRootDir();
-
+        final ImageFs imageFs = ImageFs.find(activity);
+        final File rootDir = imageFs.getRootDir();
         SettingsFragment.resetEmulatorsVersion(activity);
-
         final DownloadProgressDialog dialog = new DownloadProgressDialog(activity);
         dialog.show(R.string.installing_system_files);
-        
-        Executors.newSingleThreadExecutor().execute(() -> {
-            clearRootDir(rootDir);
-            final byte compressionRatio = 22;
-            final long contentLength = (long)(FileUtils.getSize(activity, "imagefs.tar.zst") * (100.0f / compressionRatio));
-            AtomicLong totalSizeRef = new AtomicLong();
+        Executors.newSingleThreadExecutor().execute(new Runnable() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda0
+            @Override // java.lang.Runnable
+            public final void run() {
+                ImageFsInstaller.lambda$installFromAssets$9(rootDir, activity, dialog, imageFs, callback);
+            }
+        });
+    }
 
-            boolean success = TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, activity, "imagefs.tar.zst", rootDir, (file, size) -> {
-                if (size > 0) {
-                    long totalSize = totalSizeRef.addAndGet(size);
-                    final int progress = (int)(((float)totalSize / contentLength) * 100);
-                    activity.runOnUiThread(() -> dialog.setProgress(progress));
+    static /* synthetic */ void lambda$installFromAssets$9(File rootDir, final MainActivity activity, final DownloadProgressDialog dialog, ImageFs imageFs, final onInstallationFinish callback) {
+        clearRootDir(rootDir);
+        final long contentLength = (long) (FileUtils.getSize(activity, "imagefs.tar.zst") * 4.5454545f);
+        final AtomicLong totalSizeRef = new AtomicLong();
+        boolean success = TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, activity, "imagefs.tar.zst", rootDir, new OnExtractFileListener() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda2
+            @Override // com.winlator.cmod.core.OnExtractFileListener
+            public final File onExtractFile(File file, long j) {
+                return ImageFsInstaller.lambda$installFromAssets$7(totalSizeRef, contentLength, activity, dialog, file, j);
+            }
+        });
+        if (success) {
+            installWineFromAssets(dialog, activity);
+            installDriversFromAssets(dialog, activity);
+            imageFs.createImgVersionFile(22);
+            FileUtils.symlink("libSDL2-2.0.so", new File(imageFs.getLibDir(), "libSDL2-2.0.so.0").getAbsolutePath());
+            resetContainerImgVersions(activity);
+        } else {
+            AppUtils.showToast(activity, R.string.unable_to_install_system_files);
+        }
+        dialog.closeOnUiThread();
+        activity.runOnUiThread(new Runnable() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda3
+            @Override // java.lang.Runnable
+            public final void run() {
+                ImageFsInstaller.lambda$installFromAssets$8(callback);
+            }
+        });
+    }
+
+    static /* synthetic */ File lambda$installFromAssets$7(AtomicLong totalSizeRef, long contentLength, MainActivity activity, final DownloadProgressDialog dialog, File file, long size) {
+        if (size > 0) {
+            long totalSize = totalSizeRef.addAndGet(size);
+            final int progress = (int) ((totalSize / contentLength) * 100.0f);
+            activity.runOnUiThread(new Runnable() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda6
+                @Override // java.lang.Runnable
+                public final void run() {
+                    dialog.setProgress(progress);
                 }
-                return file;
             });
-
-            if (success) {
-                installWineFromAssets(dialog, activity);
-                installDriversFromAssets(dialog, activity);
-                imageFs.createImgVersionFile(LATEST_VERSION);
-                FileUtils.symlink("libSDL2-2.0.so", new File(imageFs.getLibDir(), "libSDL2-2.0.so.0").getAbsolutePath());
-                resetContainerImgVersions(activity);
-            }
-            else AppUtils.showToast(activity, R.string.unable_to_install_system_files);
-            
-            dialog.closeOnUiThread();
-            activity.runOnUiThread(() -> {if (callback != null) callback.call();});
-        });
+        }
+        return file;
     }
 
-    public static void installFromAssetsSilently(final AppCompatActivity activity,
-                                                   final InstallationProgressListener listener) {
+    static /* synthetic */ void lambda$installFromAssets$8(onInstallationFinish callback) {
+        if (callback != null) {
+            callback.call();
+        }
+    }
+
+    public static void installFromAssetsSilently(final AppCompatActivity activity, final InstallationProgressListener listener) {
         AppUtils.keepScreenOn(activity);
-        ImageFs imageFs = ImageFs.find(activity);
-        File rootDir = imageFs.getRootDir();
+        final ImageFs imageFs = ImageFs.find(activity);
+        final File rootDir = imageFs.getRootDir();
         SettingsFragment.resetEmulatorsVersion(activity);
-
-        Executors.newSingleThreadExecutor().execute(() -> {
-            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-            clearRootDir(rootDir);
-            final byte compressionRatio = 22;
-            final long contentLength = (long)(FileUtils.getSize(activity, "imagefs.tar.zst") * (100.0f / compressionRatio));
-            AtomicLong totalSizeRef = new AtomicLong();
-            AtomicLong lastProgressDispatch = new AtomicLong(0L);
-            AtomicInteger lastPublishedProgress = new AtomicInteger(-1);
-
-            boolean success = TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, activity,
-                    "imagefs.tar.zst", rootDir, (file, size) -> {
-                        if (size > 0 && contentLength > 0) {
-                            long totalSize = totalSizeRef.addAndGet(size);
-                            int progress = Math.min(75, (int)(((float)totalSize / contentLength) * 75));
-                            long now = SystemClock.uptimeMillis();
-                            int previous = lastPublishedProgress.get();
-                            if (progress > previous
-                                    && (progress >= 75 || progress - previous >= 2)
-                                    && now - lastProgressDispatch.get() >= 120L) {
-                                lastProgressDispatch.set(now);
-                                lastPublishedProgress.set(progress);
-                                if (listener != null) {
-                                    activity.runOnUiThread(() -> listener.onProgress(progress));
-                                }
-                            }
-                        }
-                        return file;
-                    });
-
-            if (success) {
-                installWineFromAssets(null, activity);
-                if (listener != null) activity.runOnUiThread(() -> listener.onProgress(88));
-                installDriversFromAssets(null, activity);
-                if (listener != null) activity.runOnUiThread(() -> listener.onProgress(96));
-                imageFs.createImgVersionFile(LATEST_VERSION);
-                FileUtils.symlink("libSDL2-2.0.so",
-                        new File(imageFs.getLibDir(), "libSDL2-2.0.so.0").getAbsolutePath());
-                resetContainerImgVersions(activity);
-            } else {
-                AppUtils.showToast(activity, R.string.unable_to_install_system_files);
+        Executors.newSingleThreadExecutor().execute(new Runnable() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda4
+            @Override // java.lang.Runnable
+            public final void run() {
+                ImageFsInstaller.lambda$installFromAssetsSilently$15(rootDir, activity, listener, imageFs);
             }
-
-            final boolean completed = success;
-            activity.runOnUiThread(() -> {
-                if (listener != null && completed) listener.onProgress(100);
-                if (listener != null) listener.onFinished(completed);
-            });
         });
     }
 
-    public static boolean installIfNeeded(final MainActivity activity, onInstallationFinish callback) {
+    static /* synthetic */ void lambda$installFromAssetsSilently$15(File rootDir, final AppCompatActivity activity, final InstallationProgressListener listener, ImageFs imageFs) {
+        Process.setThreadPriority(10);
+        clearRootDir(rootDir);
+        final long contentLength = (long) (FileUtils.getSize(activity, "imagefs.tar.zst") * 4.5454545f);
+        final AtomicLong totalSizeRef = new AtomicLong();
+        final AtomicLong lastProgressDispatch = new AtomicLong(0L);
+        final AtomicInteger lastPublishedProgress = new AtomicInteger(-1);
+        final boolean success = TarCompressorUtils.extract(TarCompressorUtils.Type.ZSTD, activity, "imagefs.tar.zst", rootDir, new OnExtractFileListener() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda8
+            @Override // com.winlator.cmod.core.OnExtractFileListener
+            public final File onExtractFile(File file, long j) {
+                return ImageFsInstaller.lambda$installFromAssetsSilently$11(contentLength, totalSizeRef, lastPublishedProgress, lastProgressDispatch, listener, activity, file, j);
+            }
+        });
+        if (success) {
+            installWineFromAssets(null, activity);
+            if (listener != null) {
+                activity.runOnUiThread(new Runnable() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda9
+                    @Override // java.lang.Runnable
+                    public final void run() {
+                        listener.onProgress(88);
+                    }
+                });
+            }
+            installDriversFromAssets(null, activity);
+            if (listener != null) {
+                activity.runOnUiThread(new Runnable() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda10
+                    @Override // java.lang.Runnable
+                    public final void run() {
+                        listener.onProgress(96);
+                    }
+                });
+            }
+            imageFs.createImgVersionFile(22);
+            FileUtils.symlink("libSDL2-2.0.so", new File(imageFs.getLibDir(), "libSDL2-2.0.so.0").getAbsolutePath());
+            resetContainerImgVersions(activity);
+        } else {
+            AppUtils.showToast(activity, R.string.unable_to_install_system_files);
+        }
+        activity.runOnUiThread(new Runnable() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda11
+            @Override // java.lang.Runnable
+            public final void run() {
+                ImageFsInstaller.lambda$installFromAssetsSilently$14(listener, success);
+            }
+        });
+    }
+
+    static /* synthetic */ File lambda$installFromAssetsSilently$11(long contentLength, AtomicLong totalSizeRef, AtomicInteger lastPublishedProgress, AtomicLong lastProgressDispatch, final InstallationProgressListener listener, AppCompatActivity activity, File file, long size) {
+        if (size > 0 && contentLength > 0) {
+            long totalSize = totalSizeRef.addAndGet(size);
+            final int progress = Math.min(75, (int) ((totalSize / contentLength) * 75.0f));
+            long now = SystemClock.uptimeMillis();
+            int previous = lastPublishedProgress.get();
+            if (progress > previous && ((progress >= 75 || progress - previous >= 2) && now - lastProgressDispatch.get() >= 120)) {
+                lastProgressDispatch.set(now);
+                lastPublishedProgress.set(progress);
+                if (listener != null) {
+                    activity.runOnUiThread(new Runnable() { // from class: com.winlator.cmod.xenvironment.ImageFsInstaller$$ExternalSyntheticLambda5
+                        @Override // java.lang.Runnable
+                        public final void run() {
+                            listener.onProgress(progress);
+                        }
+                    });
+                }
+            }
+        }
+        return file;
+    }
+
+    static /* synthetic */ void lambda$installFromAssetsSilently$14(InstallationProgressListener listener, boolean completed) {
+        if (listener != null && completed) {
+            listener.onProgress(100);
+        }
+        if (listener != null) {
+            listener.onFinished(completed);
+        }
+    }
+
+    public static boolean installIfNeeded(MainActivity activity, onInstallationFinish callback) {
         ImageFs imageFs = ImageFs.find(activity);
-        
-        if (!imageFs.isValid() || imageFs.getVersion() < LATEST_VERSION) {
+        if (!imageFs.isValid() || imageFs.getVersion() < 22) {
             installFromAssets(activity, callback);
             return true;
-        }    
-        
+        }
         return false;
     }
 
@@ -215,27 +308,48 @@ public abstract class ImageFsInstaller {
         File[] files = optDir.listFiles();
         if (files != null) {
             for (File file : files) {
-                if (file.getName().equals("installed-wine")) continue;
-                FileUtils.delete(file);
-            }
-        }
-    }
-
-    private static void clearRootDir(File rootDir) {
-        if (rootDir.isDirectory()) {
-            File[] files = rootDir.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        String name = file.getName();
-                        if (name.equals("home")) {
-                            continue;
-                        }
-                    }
+                if (!file.getName().equals("installed-wine")) {
                     FileUtils.delete(file);
                 }
             }
         }
-        else rootDir.mkdirs();
+    }
+
+    /* JADX WARN: Removed duplicated region for block: B:13:0x0025  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+        To view partially-correct add '--show-bad-code' argument
+    */
+    private static void clearRootDir(java.io.File r6) {
+        /*
+            boolean r0 = r6.isDirectory()
+            if (r0 == 0) goto L2c
+            java.io.File[] r0 = r6.listFiles()
+            if (r0 == 0) goto L2b
+            int r1 = r0.length
+            r2 = 0
+        Le:
+            if (r2 >= r1) goto L2b
+            r3 = r0[r2]
+            boolean r4 = r3.isDirectory()
+            if (r4 == 0) goto L25
+            java.lang.String r4 = r3.getName()
+            java.lang.String r5 = "home"
+            boolean r5 = r4.equals(r5)
+            if (r5 == 0) goto L25
+            goto L28
+        L25:
+            com.winlator.cmod.core.FileUtils.delete(r3)
+        L28:
+            int r2 = r2 + 1
+            goto Le
+        L2b:
+            goto L2f
+        L2c:
+            r6.mkdirs()
+        L2f:
+            return
+        */
+        throw new UnsupportedOperationException("Method not decompiled: com.winlator.cmod.xenvironment.ImageFsInstaller.clearRootDir(java.io.File):void");
     }
 }

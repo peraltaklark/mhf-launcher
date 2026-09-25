@@ -1,23 +1,27 @@
 package com.winlator.cmod.core;
 
 import android.content.Context;
-
 import com.winlator.cmod.container.Container;
 import com.winlator.cmod.container.ContainerManager;
 import com.winlator.cmod.contents.ContentProfile;
 import com.winlator.cmod.contents.ContentsManager;
 import com.winlator.cmod.xenvironment.ImageFs;
-
 import java.io.File;
 
+/* JADX INFO: loaded from: classes10.dex */
 public final class WineRuntimeGuard {
-    private WineRuntimeGuard() {}
+    private WineRuntimeGuard() {
+    }
 
     public static String getContainerUsing(Context context, String runtimeIdentifier) {
-        if (runtimeIdentifier == null || runtimeIdentifier.isEmpty()) return null;
+        if (runtimeIdentifier == null || runtimeIdentifier.isEmpty()) {
+            return null;
+        }
         ContainerManager manager = new ContainerManager(context);
         for (Container container : manager.getContainers()) {
-            if (runtimeIdentifier.equals(container.getWineVersion())) return container.getName();
+            if (runtimeIdentifier.equals(container.getWineVersion())) {
+                return container.getName();
+            }
         }
         return null;
     }
@@ -38,7 +42,9 @@ public final class WineRuntimeGuard {
 
     public static boolean removeBundledMain(Context context) {
         String identifier = WineInfo.MAIN_WINE_VERSION.identifier();
-        if (isInUse(context, identifier)) return false;
+        if (isInUse(context, identifier)) {
+            return false;
+        }
         File runtime = new File(ImageFs.find(context).getRootDir(), "opt/" + identifier);
         return !runtime.exists() || FileUtils.delete(runtime);
     }
@@ -48,9 +54,12 @@ public final class WineRuntimeGuard {
     }
 
     public static boolean canRemove(Context context, ContentProfile profile) {
-        if (profile == null) return true;
-        if (profile.type != ContentProfile.ContentType.CONTENT_TYPE_WINE
-                && profile.type != ContentProfile.ContentType.CONTENT_TYPE_PROTON) return true;
-        return !isInUse(context, identifierFor(profile));
+        if (profile == null) {
+            return true;
+        }
+        if (profile.type == ContentProfile.ContentType.CONTENT_TYPE_WINE || profile.type == ContentProfile.ContentType.CONTENT_TYPE_PROTON) {
+            return true ^ isInUse(context, identifierFor(profile));
+        }
+        return true;
     }
 }

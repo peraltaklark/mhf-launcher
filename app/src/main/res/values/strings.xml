@@ -4,7 +4,7 @@
     <!ENTITY TERMUX_X11_APP_NAME "Winlator:X11">
     ]>
 <resources>
-    <string name="app_name">Winlator Ludashi+</string>
+    <string name="app_name">Monster Hunter Frontier Launcher</string>
     <string name="run">Run</string>
     <string name="edit">Edit</string>
     <string name="remove">Remove</string>
@@ -817,4 +817,6 @@ E.g. <b>META</b> for <i>META key</i>, \n
         Default <b>50</b>. Only has any effect when DYNAMICL1CACHE is on.
         <br /><br /><b>When to change:</b> Raise it if you get a hitch shortly after a level load, which usually means the cache shrank and then had to grow straight back. Lower it to hand memory back sooner. It does nothing at all unless DYNAMICL1CACHE is on.
         ]]></string>
+    <string name="change_game_folder">Change game folder</string>
+    <string name="select_game_folder">Select game folder</string>
 </resources>

@@ -1,0 +1,130 @@
+{
+  "_comment": "Device auto-detect table for the RE7 port. SnapdragonProfile.java is the runtime source of truth; this file documents the mapping.",
+  "_scope": "Wide Snapdragon: Adreno 6xx (Pad 5 / 860) through 8 Elite Gen 5. One APK, multiple Turnip packs, auto-pick + manual override.",
+
+  "screen_policy": {
+    "phone": "Always 1600x720 (exactly 20:9). Any wide phone-like panel (AR >= ~19:9) or swDp < 600.",
+    "tablet": "Height fixed at 800; width = round(800 * panel_landscape_AR), even dims. e.g. Pad 5 16:10 -> 1280x800.",
+    "stretch": "fullscreenStretched=true so Wine fills the physical panel after SGSR/CAS."
+  },
+
+  "turnip_packs": {
+    "turnip-oneui7-8gen2": "Weab-chan OneUI7 / Adreno 740 (8 Gen 2) — proven on CPH2585",
+    "turnip26.3.0-oneui": "StevenMXZ Mesa 26.3 OneUI — 8 Gen 3 / Adreno 750 ONLY (not Elite)",
+    "turnip-a8xx-v31": "whitebelyash turnip/gen8 V31 — Adreno 810/825/829/830/840 (8 Elite / Elite Gen 5)",
+    "turnip26.2.0-oneui-r8": "A7xx OneUI-R8 — 8 Gen 1 / 888 class",
+    "turnip26.2.0": "Generic Mesa Turnip — Adreno 6xx + unknown fallback"
+  },
+
+  "devices": [
+    {
+      "soc": "SM8550",
+      "marketing": "Snapdragon 8 Gen 2",
+      "adreno": 740,
+      "tier": "flagship",
+      "turnip": "turnip-oneui7-8gen2",
+      "form": "phone → 1600x720",
+      "frame_cap": 35,
+      "sharpness": 100
+    },
+    {
+      "soc": "SM8650",
+      "marketing": "Snapdragon 8 Gen 3",
+      "adreno": 750,
+      "tier": "flagship",
+      "turnip": "turnip26.3.0-oneui",
+      "form": "phone → 1600x720",
+      "frame_cap": 35,
+      "sharpness": 100,
+      "notes": "Adreno 7xx — do NOT use turnip-a8xx-v31"
+    },
+    {
+      "soc": "SM8750",
+      "marketing": "Snapdragon 8 Elite",
+      "adreno": 830,
+      "tier": "flagship",
+      "turnip": "turnip-a8xx-v31",
+      "form": "phone → 1600x720",
+      "frame_cap": 35,
+      "sharpness": 100,
+      "env": "TU_DEBUG=sysmem",
+      "notes": "Adreno 8xx — separate from 8 Gen 3 Turnip"
+    },
+    {
+      "soc": "SM8850",
+      "marketing": "Snapdragon 8 Elite Gen 5",
+      "adreno": 840,
+      "tier": "flagship",
+      "turnip": "turnip-a8xx-v31",
+      "form": "phone → 1600x720",
+      "frame_cap": 35,
+      "sharpness": 100,
+      "env": "TU_DEBUG=sysmem",
+      "notes": "Adreno 840 — same A8xx pack as Elite; not Gen 3"
+    },
+    {
+      "soc": "SM8450",
+      "marketing": "Snapdragon 8 Gen 1",
+      "adreno": 730,
+      "tier": "mid",
+      "turnip": "turnip26.2.0-oneui-r8",
+      "form": "phone → 1600x720",
+      "frame_cap": 35,
+      "sharpness": 85
+    },
+    {
+      "soc": "SM8350",
+      "marketing": "Snapdragon 888",
+      "adreno": 660,
+      "tier": "mid",
+      "turnip": "turnip26.2.0-oneui-r8",
+      "form": "phone → 1600x720",
+      "frame_cap": 35,
+      "sharpness": 85
+    },
+    {
+      "soc": "SM8250",
+      "marketing": "Snapdragon 865 / 860 (Xiaomi Pad 5)",
+      "adreno": 640,
+      "tier": "legacy",
+      "turnip": "turnip26.2.0",
+      "form": "tablet → height 800, match AR (Pad 5 16:10 → 1280x800)",
+      "frame_cap": 35,
+      "sharpness": 75,
+      "notes": "Do NOT use turnip-oneui7-8gen2 — that pack is Adreno 740 UBWC/OEM-tuned."
+    },
+    {
+      "soc": "SM8150",
+      "marketing": "Snapdragon 855",
+      "adreno": 640,
+      "tier": "legacy",
+      "turnip": "turnip26.2.0",
+      "form": "phone or tablet by panel AR / swDp",
+      "frame_cap": 35,
+      "sharpness": 75
+    },
+    {
+      "soc": "SM7325",
+      "marketing": "Snapdragon 778G",
+      "adreno": 642,
+      "tier": "legacy",
+      "turnip": "turnip26.2.0",
+      "form": "phone or tablet by panel AR / swDp",
+      "frame_cap": 35,
+      "sharpness": 75
+    }
+  ],
+
+  "fallback": {
+    "tier": "legacy",
+    "turnip": "turnip26.2.0",
+    "screen": "form-factor policy (phone 1600x720 / tablet h=800)",
+    "behavior": "auto-pick generic Turnip; user can override on boot splash"
+  },
+
+  "shared_re7_preset": {
+    "dxvk": "async + state cache, no HUD, SAFEFLAGS=2",
+    "upscale": "SGSR + CAS",
+    "wine_fex": "bundled Proton arm64ec / FEXCore — same binaries all devices"
+  }
+}

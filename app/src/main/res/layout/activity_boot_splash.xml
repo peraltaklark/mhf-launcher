@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:background="#1a1410" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@id/BootCover" android:layout_width="match_parent" android:layout_height="match_parent" android:src="@drawable/re7_boot_cover" android:scaleType="centerCrop" android:contentDescription="@null" />
+    <LinearLayout android:layout_gravity="bottom" android:orientation="vertical" android:id="@id/BootFolderPanel" android:background="#99000000" android:paddingLeft="28.0dp" android:paddingTop="18.0dp" android:paddingRight="28.0dp" android:paddingBottom="28.0dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <TextView android:textSize="14.0sp" android:textColor="#efe6d8" android:id="@id/BootFolderPath" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Select the uncompressed PC game folder (re7.exe + .pak). Files stay where they are." />
+        <Button android:textColor="#1a1410" android:id="@id/BootSelectFolder" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dp" android:text="Select game folder" android:textAllCaps="false" android:backgroundTint="#c4a574" />
+        <TextView android:textSize="12.0sp" android:textColor="#c9bba8" android:id="@id/BootSocInfo" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14.0dp" android:text="Detecting SoC…" />
+        <TextView android:textSize="12.0sp" android:textColor="#efe6d8" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10.0dp" android:text="Turnip driver" />
+        <Spinner android:id="@id/BootDriverSpinner" android:background="#33ffffff" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4.0dp" android:popupBackground="#2a221c" />
+        <TextView android:textSize="12.0sp" android:textColor="#efe6d8" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10.0dp" android:text="Quality preset" />
+        <Spinner android:id="@id/BootQualitySpinner" android:background="#33ffffff" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4.0dp" android:popupBackground="#2a221c" />
+        <TextView android:textSize="15.0sp" android:textColor="#efe6d8" android:id="@id/BootImportStatus" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dp" />
+        <ProgressBar android:id="@id/BootImportProgress" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10.0dp" android:max="100" style="?android:progressBarStyleHorizontal" />
+    </LinearLayout>
+</FrameLayout>

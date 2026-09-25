@@ -92,10 +92,8 @@ vec3 applyNatural(vec3 c) {
 }
 
 
-
-
-vec3 applySwapRB(vec3 c) {
-    return vec3(c.b, c.g, c.r);
+vec3 applySwapRB(vec3 rgb) {
+    return vec3(rgb.b, rgb.g, rgb.r);
 }
 
 void applyPostFX(inout vec3 rgb, vec2 uv) {
@@ -103,7 +101,7 @@ void applyPostFX(inout vec3 rgb, vec2 uv) {
     else if (pc.effectId == 2) rgb = applyCRT    (rgb, uv);
     else if (pc.effectId == 3) rgb = applyHDR    (rgb, uv);
     else if (pc.effectId == 4) rgb = applyNatural(rgb);
-    else if (pc.effectId == 20) rgb = applySwapRB(rgb);
+    else if (pc.effectId == 21) rgb = applySwapRB(rgb);
 }
 
 void main() {
