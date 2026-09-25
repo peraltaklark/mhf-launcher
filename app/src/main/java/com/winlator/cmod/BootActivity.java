@@ -84,7 +84,7 @@ public class BootActivity extends AppCompatActivity {
             this.selectFolderButton.setOnClickListener(new View.OnClickListener() { // from class: com.winlator.cmod.BootActivity$$ExternalSyntheticLambda1
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    this.f$0.lambda$onCreate$0(view);
+                    BootActivity.this.lambda$onCreate$0(view);
                 }
             });
         }
@@ -286,7 +286,7 @@ public class BootActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() { // from class: com.winlator.cmod.BootActivity$$ExternalSyntheticLambda3
             @Override // java.lang.Runnable
             public final void run() {
-                this.f$0.lambda$useInPlace$1();
+                BootActivity.this.lambda$useInPlace$1();
             }
         });
     }
@@ -432,7 +432,7 @@ public class BootActivity extends AppCompatActivity {
             manager.createContainerAsync(data, contentsManager, new Callback() { // from class: com.winlator.cmod.BootActivity$$ExternalSyntheticLambda0
                 @Override // com.winlator.cmod.core.Callback
                 public final void call(Object obj) {
-                    this.f$0.lambda$createContainerAndLaunch$2(manager, (Container) obj);
+                    BootActivity.this.lambda$createContainerAndLaunch$2(manager, (Container) obj);
                 }
             });
         } catch (Exception e) {
@@ -747,7 +747,7 @@ public class BootActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() { // from class: com.winlator.cmod.BootActivity$$ExternalSyntheticLambda2
             @Override // java.lang.Runnable
             public final void run() {
-                this.f$0.lambda$fail$3(message);
+                BootActivity.this.lambda$fail$3(message);
             }
         });
     }

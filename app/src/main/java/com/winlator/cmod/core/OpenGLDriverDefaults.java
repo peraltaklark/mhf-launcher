@@ -48,10 +48,10 @@ public final class OpenGLDriverDefaults {
                 extraData.put(AUTO_MESA_OVERRIDE, automaticOverride ? "1" : obj);
                 data.put("extraData", extraData);
                 return true;
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 return false;
             }
-        } catch (JSONException e2) {
+        } catch (Exception e2) {
             return false;
         }
     }
