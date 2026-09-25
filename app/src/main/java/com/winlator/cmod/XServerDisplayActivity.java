@@ -1,5 +1,6 @@
 package com.winlator.cmod;
 
+import android.app.Dialog;
 import com.winlator.cmod.core.DXWrapper;
 
 import static com.winlator.cmod.core.AppUtils.showToast;
@@ -153,6 +154,7 @@ public class XServerDisplayActivity extends AppCompatActivity {
     // === MHF boot cover overlay ===
     private long bootCoverUntilMs = 0L;
     private ImageView bootCoverView = null;
+    private Dialog bootCoverDialog = null;
     // ===============================
 
 
@@ -455,26 +457,31 @@ public class XServerDisplayActivity extends AppCompatActivity {
 
         setContentView(R.layout.xserver_display_activity);
 
-        // === MHF: show boot cover overlay while Wine/container starts ===
+        // === MHF: show boot cover as a fullscreen Dialog (renders above SurfaceView) ===
         try {
-            FrameLayout root = findViewById(R.id.FLXServerDisplay);
-            if (root != null) {
-                bootCoverView = new ImageView(this);
-                bootCoverView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                bootCoverView.setImageResource(R.drawable.mhf_boot_cover);
-                bootCoverView.setLayoutParams(new FrameLayout.LayoutParams(
+            bootCoverDialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+            ImageView coverIv = new ImageView(this);
+            coverIv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            coverIv.setImageResource(R.drawable.mhf_boot_cover);
+            coverIv.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+            bootCoverDialog.setContentView(coverIv);
+            bootCoverDialog.setCancelable(false);
+            if (bootCoverDialog.getWindow() != null) {
+                bootCoverDialog.getWindow().setLayout(
                         ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
-                root.addView(bootCoverView);
-
-                long holdMs = getIntent().getLongExtra("mhf_boot_cover_ms", 10000L);
-                bootCoverUntilMs = System.currentTimeMillis() + Math.max(0L, holdMs);
-                long delay = Math.max(0L, bootCoverUntilMs - System.currentTimeMillis());
-                new Handler(Looper.getMainLooper()).postDelayed(
-                        XServerDisplayActivity.this::dismissBootCoverWhenReady, delay);
+                        ViewGroup.LayoutParams.MATCH_PARENT);
             }
+            bootCoverDialog.show();
+            android.util.Log.i("MHFBoot", "Boot cover dialog shown");
+
+            long holdMs = getIntent().getLongExtra("mhf_boot_cover_ms", 12000L);
+            long delay = Math.max(0L, holdMs);
+            new Handler(Looper.getMainLooper()).postDelayed(
+                    XServerDisplayActivity.this::dismissBootCoverWhenReady, delay);
         } catch (Throwable t) {
-            // never let the overlay break the boot
+            android.util.Log.e("MHFBoot", "show boot cover failed", t);
         }
         // ================================================================
 
@@ -3709,28 +3716,25 @@ public class XServerDisplayActivity extends AppCompatActivity {
     }
 
 
-    /** Fade out and remove the boot cover overlay when the game is ready. */
+    /** Dismiss the boot cover overlay when the game is ready. */
     private void dismissBootCoverWhenReady() {
-        if (bootCoverView == null) return;
         try {
-            bootCoverView.animate()
-                    .alpha(0f)
-                    .setDuration(400L)
-                    .withEndAction(() -> {
-                        if (bootCoverView != null) {
-                            ViewGroup parent = (ViewGroup) bootCoverView.getParent();
-                            if (parent != null) parent.removeView(bootCoverView);
-                            bootCoverView = null;
-                        }
-                    })
-                    .start();
+            if (bootCoverDialog != null) {
+                if (bootCoverDialog.isShowing()) bootCoverDialog.dismiss();
+                bootCoverDialog = null;
+                android.util.Log.i("MHFBoot", "Boot cover dialog dismissed");
+            }
         } catch (Throwable t) {
+            android.util.Log.e("MHFBoot", "dialog dismiss failed", t);
+        }
+        // also remove old ImageView overlay if still present
+        try {
             if (bootCoverView != null) {
                 ViewGroup parent = (ViewGroup) bootCoverView.getParent();
                 if (parent != null) parent.removeView(bootCoverView);
                 bootCoverView = null;
             }
-        }
+        } catch (Throwable ignored) {}
     }
 
 }
