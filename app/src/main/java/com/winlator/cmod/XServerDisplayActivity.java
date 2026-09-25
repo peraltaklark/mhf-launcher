@@ -150,6 +150,12 @@ import cn.sherlock.com.sun.media.sound.SF2Soundbank;
 
 public class XServerDisplayActivity extends AppCompatActivity {
 
+    // === MHF boot cover overlay ===
+    private long bootCoverUntilMs = 0L;
+    private ImageView bootCoverView = null;
+    // ===============================
+
+
     private static final boolean DISABLE_TOUCHSCREEN_AUTO_HIDE = true;
     private static final HashMap<String, Boolean> WINE_XRANDR_SUPPORT_CACHE = new HashMap<>();
 
@@ -448,6 +454,30 @@ public class XServerDisplayActivity extends AppCompatActivity {
         getWindow().setAttributes(params);
 
         setContentView(R.layout.xserver_display_activity);
+
+        // === MHF: show boot cover overlay while Wine/container starts ===
+        try {
+            FrameLayout root = findViewById(R.id.FLXServerDisplay);
+            if (root != null) {
+                bootCoverView = new ImageView(this);
+                bootCoverView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                bootCoverView.setImageResource(R.drawable.mhf_boot_cover);
+                bootCoverView.setLayoutParams(new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+                root.addView(bootCoverView);
+
+                long holdMs = getIntent().getLongExtra("mhf_boot_cover_ms", 10000L);
+                bootCoverUntilMs = System.currentTimeMillis() + Math.max(0L, holdMs);
+                long delay = Math.max(0L, bootCoverUntilMs - System.currentTimeMillis());
+                new Handler(Looper.getMainLooper()).postDelayed(
+                        XServerDisplayActivity.this::dismissBootCoverWhenReady, delay);
+            }
+        } catch (Throwable t) {
+            // never let the overlay break the boot
+        }
+        // ================================================================
+
 
         preloaderDialog = new PreloaderDialog(this);
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -3676,6 +3706,31 @@ public class XServerDisplayActivity extends AppCompatActivity {
 
     public void setScreenEffectProfile(String screenEffectProfile) {
         this.screenEffectProfile = screenEffectProfile;
+    }
+
+
+    /** Fade out and remove the boot cover overlay when the game is ready. */
+    private void dismissBootCoverWhenReady() {
+        if (bootCoverView == null) return;
+        try {
+            bootCoverView.animate()
+                    .alpha(0f)
+                    .setDuration(400L)
+                    .withEndAction(() -> {
+                        if (bootCoverView != null) {
+                            ViewGroup parent = (ViewGroup) bootCoverView.getParent();
+                            if (parent != null) parent.removeView(bootCoverView);
+                            bootCoverView = null;
+                        }
+                    })
+                    .start();
+        } catch (Throwable t) {
+            if (bootCoverView != null) {
+                ViewGroup parent = (ViewGroup) bootCoverView.getParent();
+                if (parent != null) parent.removeView(bootCoverView);
+                bootCoverView = null;
+            }
+        }
     }
 
 }
