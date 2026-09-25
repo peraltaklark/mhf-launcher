@@ -70,24 +70,10 @@ public final class GameFolderPrefs {
     }
 
     public static boolean isGameDir(File dir) {
-        File[] paks;
         if (dir == null || !dir.isDirectory()) {
             return false;
         }
-        File exe = new File(dir, "mhf.exe");
-        if (!exe.isFile() || exe.length() < 1048576 || (paks = dir.listFiles(new FilenameFilter() { // from class: com.winlator.cmod.core.GameFolderPrefs$$ExternalSyntheticLambda1
-            @Override // java.io.FilenameFilter
-            public final boolean accept(File file, String str) {
-                return GameFolderPrefs.lambda$isGameDir$0(file, str);
-            }
-        })) == null) {
-            return false;
-        }
-        long pakBytes = 0;
-        for (File p : paks) {
-            pakBytes += p.length();
-        }
-        return pakBytes > 104857600;
+        return new File(dir, "mhf.exe").isFile();
     }
 
     static /* synthetic */ boolean lambda$isGameDir$0(File d, String n) {
