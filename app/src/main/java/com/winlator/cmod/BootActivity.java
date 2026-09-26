@@ -1,5 +1,8 @@
 package com.winlator.cmod;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.FileWriter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import com.winlator.cmod.core.WineThemeManager;
@@ -623,6 +626,7 @@ public class BootActivity extends AppCompatActivity {
             container.setDXWrapperConfig(p.dxwrapperConfig(container.getDXWrapperConfig()));
             container.setEnvVars(p.buildEnvVars());
             container.saveData();
+            try { applyRegFile(container.getRootDir()); } catch (Throwable ignored) {}
         } catch (Throwable t) {
             Log.w(TAG, "container preset re-apply skipped: " + t);
         }
@@ -791,6 +795,61 @@ public class BootActivity extends AppCompatActivity {
             Log.i(TAG, "Boot wallpaper written: " + wallpaperFile.getAbsolutePath());
         } catch (Throwable t) {
             Log.w(TAG, "installBootWallpaper failed: " + t);
+        }
+    }
+
+
+    /** Convert a Windows .reg file into Wine's user.reg native format and append it. */
+    private void applyRegFile(File containerRoot) {
+        try {
+            File userReg = new File(containerRoot, ".wine/user.reg");
+            if (!userReg.getParentFile().isDirectory()) {
+                userReg.getParentFile().mkdirs();
+            }
+
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(getAssets().open("launcher-dinput-fix.reg"), "UTF-8"));
+
+            StringBuilder out = new StringBuilder();
+            String line;
+            boolean headerSkipped = false;
+            long now = System.currentTimeMillis() / 1000L;
+
+            while ((line = reader.readLine()) != null) {
+                String trimmed = line.trim();
+
+                if (!headerSkipped) {
+                    if (trimmed.isEmpty() || trimmed.startsWith("Windows Registry")) {
+                        continue;
+                    }
+                    headerSkipped = true;
+                }
+
+                // Convert [HKEY_CURRENT_USER\Path] -> [Path] timestamp
+                if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+                    String key = trimmed.substring(1, trimmed.length() - 1);
+                    key = key.replace("HKEY_CURRENT_USER\\", "");
+                    key = key.replace("HKEY_CURRENT_USER\", "");
+                    // Escape single backslashes to double for Wine
+                    key = key.replace("\\", "\\\\");
+                    out.append("\n[").append(key).append("] ").append(now).append("\n");
+                } else if (trimmed.isEmpty()) {
+                    out.append("\n");
+                } else {
+                    out.append(line).append("\n");
+                }
+            }
+            reader.close();
+
+            // Append to user.reg
+            try (FileWriter fw = new FileWriter(userReg, true)) {
+                fw.write("\n");
+                fw.write(out.toString());
+            }
+
+            Log.i(TAG, "Applied launcher-dinput-fix.reg to " + userReg.getAbsolutePath());
+        } catch (Throwable t) {
+            Log.w(TAG, "applyRegFile failed: " + t);
         }
     }
 

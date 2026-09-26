@@ -724,7 +724,7 @@ public class XServerDisplayActivity extends AppCompatActivity {
         }
 
         boolean removeLoadingBarWhenBootingGames = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean("remove_loading_bar_when_booting_games", false);
+                .getBoolean("remove_loading_bar_when_booting_games", true);
         if (!removeLoadingBarWhenBootingGames) preloaderDialog.show(R.string.starting_up);
 
         inputControlsManager = new InputControlsManager(this);
@@ -1037,7 +1037,7 @@ public class XServerDisplayActivity extends AppCompatActivity {
     private void exit() {
         NotificationManagerCompat.from(this).cancel(NOTIFICATION_ID);
         boolean removeLoadingBar = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean("remove_loading_bar_when_booting_games", false);
+                .getBoolean("remove_loading_bar_when_booting_games", true);
         if (!removeLoadingBar) preloaderDialog.showOnUiThread(R.string.shutdown);
 
         if (xServerView != null) {
