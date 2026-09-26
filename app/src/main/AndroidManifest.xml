@@ -45,12 +45,6 @@
             </intent-filter>
         </activity>
 
-
-        <service
-            android:name="com.winlator.cmod.services.NotificationService"
-            android:foregroundServiceType="specialUse"
-            android:exported="false" />
-
         <service
             android:name="com.winlator.cmod.store.SteamForegroundService"
             android:foregroundServiceType="dataSync"

@@ -53,13 +53,7 @@ import com.winlator.cmod.core.PreloaderDialog;
 import com.winlator.cmod.container.ContainerManager;
 import com.winlator.cmod.container.Shortcut;
 import com.winlator.cmod.core.WineThemeManager;
-import com.winlator.cmod.store.AmazonMainActivity;
-import com.winlator.cmod.store.DownloadsActivity;
-import com.winlator.cmod.store.EpicMainActivity;
-import com.winlator.cmod.store.GogMainActivity;
-import com.winlator.cmod.store.SteamMainActivity;
 import com.winlator.cmod.xenvironment.ImageFsInstaller;
-import com.winlator.cmod.services.NotificationService;
 
 import java.io.File;
 import java.util.List;
@@ -84,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public final PreloaderDialog preloaderDialog = new PreloaderDialog(this);
     private boolean editInputControls = false;
     private int selectedProfileId;
-    private Intent notificationService;
     private SharedPreferences sharedPreferences;
     private ContainerManager containerManager;
     private boolean isDarkMode;
@@ -130,8 +123,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             finish();
             return;
         }
-
-        notificationService = new Intent(this, NotificationService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && (Build.VERSION.SDK_INT < 33 || ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED))
             createNotificationChannel();
 
@@ -213,7 +204,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             if (!ImageFsInstaller.installIfNeeded(this, () -> requestAppPermissions())) {
                 if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)
-                    startForegroundService(notificationService);
             }
         }
     }
@@ -253,7 +243,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (requestCode == PERMISSION_POST_NOTIFICATIONS_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                startForegroundService(notificationService);
         } else if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 requestAppPermissions();
@@ -404,21 +393,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.main_menu_about:
                 showAboutDialog();
-                break;
-            case R.id.main_menu_gog:
-                startActivity(new Intent(this, GogMainActivity.class));
-                break;
-            case R.id.main_menu_epic:
-                startActivity(new Intent(this, EpicMainActivity.class));
-                break;
-            case R.id.main_menu_amazon:
-                startActivity(new Intent(this, AmazonMainActivity.class));
-                break;
-            case R.id.main_menu_steam:
-                startActivity(new Intent(this, SteamMainActivity.class));
-                break;
-            case R.id.main_menu_downloads:
-                startActivity(new Intent(this, DownloadsActivity.class));
                 break;
         }
         return true;

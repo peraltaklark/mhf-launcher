@@ -1,5 +1,5 @@
 {
-  "_comment": "Device auto-detect table for the MHF port. SnapdragonProfile.java is the runtime source of truth; this file documents the mapping.",
+  "_comment": "Device auto-detect table for the RE7 port. SnapdragonProfile.java is the runtime source of truth; this file documents the mapping.",
   "_scope": "Wide Snapdragon: Adreno 6xx (Pad 5 / 860) through 8 Elite Gen 5. One APK, multiple Turnip packs, auto-pick + manual override.",
 
   "screen_policy": {
@@ -122,7 +122,7 @@
     "behavior": "auto-pick generic Turnip; user can override on boot splash"
   },
 
-  "shared_mhf_preset": {
+  "shared_re7_preset": {
     "dxvk": "async + state cache, no HUD, SAFEFLAGS=2",
     "upscale": "SGSR + CAS",
     "wine_fex": "bundled Proton arm64ec / FEXCore — same binaries all devices"
