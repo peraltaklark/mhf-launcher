@@ -829,7 +829,7 @@ public class BootActivity extends AppCompatActivity {
                 if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
                     String key = trimmed.substring(1, trimmed.length() - 1);
                     key = key.replace("HKEY_CURRENT_USER\\", "");
-                    key = key.replace("HKEY_CURRENT_USER\", "");
+                    key = key.replace("HKEY_CURRENT_USER\\", "");
                     // Escape single backslashes to double for Wine
                     key = key.replace("\\", "\\\\");
                     out.append("\n[").append(key).append("] ").append(now).append("\n");
