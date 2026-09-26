@@ -1351,7 +1351,7 @@ public class XServerDisplayActivity extends AppCompatActivity {
 
     private void setupXEnvironment() throws PackageManager.NameNotFoundException {
 
-        envVars.put("LC_ALL", lc_all);
+        envVars.put("LC_ALL", "ja_JP.UTF-8");   // MHF: forced
         envVars.put("WINEPREFIX", imageFs.wineprefix);
 
         boolean enableWineDebug = preferences.getBoolean("enable_wine_debug", false);

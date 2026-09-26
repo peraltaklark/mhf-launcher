@@ -94,7 +94,7 @@ public class Container {
     private JSONObject extraData;
     private String midiSoundFont = "";
     private int inputType = WinHandler.DEFAULT_INPUT_TYPE;
-    private String lc_all = "";
+    private String lc_all = "ja_JP.UTF-8";   // MHF default
     private int primaryController = 1;
     private String controllerMapping = new String(new char[XrControllerMapping.values().length]);
     private String box64Version;

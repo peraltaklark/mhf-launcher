@@ -476,7 +476,6 @@ public class BootActivity extends AppCompatActivity {
         data.put("dxwrapperConfig", p.dxwrapperConfig(Container.DEFAULT_DXWRAPPERCONFIG));
         data.put("audioDriver", Container.DEFAULT_AUDIO_DRIVER);
         data.put("emulator", arm64ec ? Container.DEFAULT_EMULATOR : "Box64");
-        data.put("lc_all", "ja_JP.UTF-8");   // MHF: Japanese locale
         data.put("wincomponents", Container.DEFAULT_WINCOMPONENTS);
         data.put("drives", drivesString());
         data.put("box64Version", "0.4.2");
