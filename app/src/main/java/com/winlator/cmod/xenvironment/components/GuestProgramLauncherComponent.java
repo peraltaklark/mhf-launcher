@@ -512,10 +512,8 @@ public class GuestProgramLauncherComponent extends EnvironmentComponent {
         else {
             if (wineInfo.isArm64EC()) {
                 command = winePath + "/" + guestExecutable;
-                if (emulator.toLowerCase().equals("fexcore"))
-                    execEnvVars.put("HODLL", "libwow64fex.dll");
-                else
-                    execEnvVars.put("HODLL", "wowbox64.dll");
+                // FORCED: always use WoWBox64's 32-bit shim, ignore emulator field
+                execEnvVars.put("HODLL", "wowbox64.dll");
             } else
                 command = imageFs.getBinDir() + "/box64 " + guestExecutable;
         }
