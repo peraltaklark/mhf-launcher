@@ -75,7 +75,7 @@ public abstract class WineUtils {
 
         try (WineRegistryEditor registryEditor = new WineRegistryEditor(userRegFile)) {
             for (String name : direct3dLibs) registryEditor.setStringValue(dllOverridesKey, name, "native,builtin");
-            for (String name : xinputLibs) registryEditor.setStringValue(dllOverridesKey, name, "builtin,native");
+            for (String name : xinputLibs) registryEditor.setStringValue(dllOverridesKey, name, "native,builtin");
             setWindowMetrics(registryEditor);
             if (wineInfo.isArm64EC() && !GPUInformation.getRenderer(null,null).contains("Mali")) for(String name: openglLibs) registryEditor.setStringValue(dllOverridesKey, name, "native,builtin");
         }
