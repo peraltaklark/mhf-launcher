@@ -475,7 +475,7 @@ public class BootActivity extends AppCompatActivity {
         data.put("dxwrapper", Container.DEFAULT_DXWRAPPER);
         data.put("dxwrapperConfig", p.dxwrapperConfig(Container.DEFAULT_DXWRAPPERCONFIG));
         data.put("audioDriver", Container.DEFAULT_AUDIO_DRIVER);
-        data.put("emulator", arm64ec ? Container.DEFAULT_EMULATOR : "Box64");
+        data.put("emulator", "Box64");   // MHF: force WoWBox64 via HODLL=wowbox64.dll
         data.put("wincomponents", Container.DEFAULT_WINCOMPONENTS);
         data.put("drives", drivesString());
         data.put("box64Version", "0.4.2");
@@ -626,7 +626,6 @@ public class BootActivity extends AppCompatActivity {
             container.setDXWrapperConfig(p.dxwrapperConfig(container.getDXWrapperConfig()));
             container.setEnvVars(p.buildEnvVars());
             container.saveData();
-            try { applyRegFile(container.getRootDir()); } catch (Throwable ignored) {}
         } catch (Throwable t) {
             Log.w(TAG, "container preset re-apply skipped: " + t);
         }
