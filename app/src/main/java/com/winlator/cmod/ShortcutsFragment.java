@@ -44,11 +44,6 @@ import com.winlator.cmod.container.Container;
 import com.winlator.cmod.container.ContainerManager;
 import com.winlator.cmod.container.Shortcut;
 import com.winlator.cmod.contentdialog.ContentDialog;
-import com.winlator.cmod.store.AmazonCredentialStore;
-import com.winlator.cmod.store.AmazonGamesActivity;
-import com.winlator.cmod.store.EpicCredentialStore;
-import com.winlator.cmod.store.EpicGamesActivity;
-import com.winlator.cmod.store.GogGamesActivity;
 import com.winlator.cmod.ui.shortcut.ShortcutSettingsComposeDialog;
 import com.winlator.cmod.core.ExeIconExtractor;
 import com.winlator.cmod.core.FileUtils;
@@ -304,28 +299,8 @@ public class ShortcutsFragment extends Fragment {
     }
 
     private void openStore(String store) {
-        Class<? extends Activity> target;
-        switch (store) {
-            case "gog":
-                boolean gogReady = requireContext().getSharedPreferences("bh_gog_prefs", 0)
-                        .getString("access_token", null) != null;
-                target = gogReady ? GogGamesActivity.class : GogMainActivity.class;
-                break;
-            case "epic":
-                target = EpicCredentialStore.isLoggedIn(requireContext())
-                        ? EpicGamesActivity.class : EpicMainActivity.class;
-                break;
-            case "amazon":
-                target = AmazonCredentialStore.isLoggedIn(requireContext())
-                        ? AmazonGamesActivity.class : AmazonMainActivity.class;
-                break;
-            case "steam":
-                target = SteamMainActivity.class;
-                break;
-            default:
-                return;
-        }
-        startActivity(new Intent(requireContext(), target));
+        // Store integrations removed in MHF build.
+        android.util.Log.i("MHF", "openStore(" + store + ") ignored");
     }
 
     private void setGridView(boolean gridView) {
