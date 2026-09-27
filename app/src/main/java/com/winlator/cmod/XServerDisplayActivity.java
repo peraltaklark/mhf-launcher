@@ -942,6 +942,15 @@ public class XServerDisplayActivity extends AppCompatActivity {
                 editInputControlsCallback = null;
             }
         }
+        if (requestCode == REQUEST_CODE_LOSSLESS_IMPORT) {
+            if (data != null && data.getData() != null
+                    && LosslessDll.importGlobalLosslessDll(this, data.getData())) {
+                android.widget.Toast.makeText(this, "Lossless.dll imported", android.widget.Toast.LENGTH_SHORT).show();
+                refreshLosslessStatus();
+            } else {
+                android.widget.Toast.makeText(this, "Unable to import Lossless.dll", android.widget.Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
@@ -3697,20 +3706,6 @@ public class XServerDisplayActivity extends AppCompatActivity {
             tv.setText(ok ? "Lossless.dll: Imported \u2713" : "Lossless.dll: Not imported");
         });
     }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_LOSSLESS_IMPORT) {
-            if (data != null && data.getData() != null
-                    && LosslessDll.importGlobalLosslessDll(this, data.getData())) {
-                android.widget.Toast.makeText(this, "Lossless.dll imported", android.widget.Toast.LENGTH_SHORT).show();
-                refreshLosslessStatus();
-            } else {
-                android.widget.Toast.makeText(this, "Unable to import Lossless.dll", android.widget.Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
 }
