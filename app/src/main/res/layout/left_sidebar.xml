@@ -94,41 +94,6 @@
                 android:src="@drawable/ic_sidebar_performance"
                 app:tint="@color/ingame_sidebar_icon_tint" />
         </com.winlator.cmod.ui.SidebarNavItemView>
-
-        <com.winlator.cmod.ui.SidebarNavItemView
-            android:id="@+id/BTItemTaskManager"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="@drawable/sidebar_nav_icon_bg">
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:duplicateParentState="true"
-                android:src="@drawable/ic_sidebar_task_manager"
-                app:tint="@color/ingame_sidebar_icon_tint" />
-        </com.winlator.cmod.ui.SidebarNavItemView>
-
-        <com.winlator.cmod.ui.SidebarNavItemView
-            android:id="@+id/BTItemPause"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="@drawable/sidebar_nav_icon_bg">
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:duplicateParentState="true"
-                android:src="@drawable/icon_pause"
-                app:tint="@color/ingame_sidebar_icon_tint" />
-        </com.winlator.cmod.ui.SidebarNavItemView>
-
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"

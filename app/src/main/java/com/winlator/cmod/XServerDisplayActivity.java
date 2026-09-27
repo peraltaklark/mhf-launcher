@@ -1823,21 +1823,7 @@ public class XServerDisplayActivity extends AppCompatActivity {
         toggleOnClick(R.id.BTItemScreen, R.id.LLSubScreen);
         openSidebarPanel(R.id.BTItemFPS, R.id.LLSubFPS);
 
-        ViewGroup btItemPause = (ViewGroup) findViewById(R.id.BTItemPause);
-        if (btItemPause != null) {
-            ImageView pauseIcon = (ImageView) btItemPause.getChildAt(0);
-            btItemPause.setOnClickListener(v -> {
-                if (isPaused) {
-                    ProcessHelper.resumeAllWineProcesses();
-                    if (pauseIcon != null) pauseIcon.setImageResource(R.drawable.icon_pause);
-                } else {
-                    ProcessHelper.pauseAllWineProcesses();
-                    if (pauseIcon != null) pauseIcon.setImageResource(R.drawable.icon_play);
-                }
-                isPaused = !isPaused;
-                drawerLayout.closeDrawers();
-            });
-        }
+        // MHF: pause button removed from sidebar
 
         View btSubKeyboard = findViewById(R.id.BTSubKeyboard);
         if (btSubKeyboard != null) {
@@ -1954,18 +1940,7 @@ public class XServerDisplayActivity extends AppCompatActivity {
             });
         }
 
-        View btItemTaskManager = findViewById(R.id.BTItemTaskManager);
-        if (btItemTaskManager != null) {
-            btItemTaskManager.setOnClickListener(v -> {
-                openSidebarPanel(R.id.BTItemTaskManager, R.id.LLSubTaskManager);
-                View taskPanel = findViewById(R.id.LLSubTaskManager);
-                if (taskPanel != null) {
-                    if (taskManagerSidebar == null)
-                        taskManagerSidebar = new TaskManagerSidebar(this, taskPanel);
-                    taskManagerSidebar.start();
-                }
-            });
-        }
+        // MHF: task manager button removed from sidebar
 
         if (btItemLogs != null) {
             btItemLogs.setOnClickListener(v -> {
@@ -1992,8 +1967,7 @@ public class XServerDisplayActivity extends AppCompatActivity {
         R.id.LLSubMouse,
         R.id.LLSubFPS,
         R.id.LLSubGraphics,
-        R.id.LLSubScreen,
-        R.id.LLSubTaskManager
+        R.id.LLSubScreen
     };
 
     private final int[] sidebarItemIds = {
@@ -2001,8 +1975,7 @@ public class XServerDisplayActivity extends AppCompatActivity {
         R.id.BTItemMouse,
         R.id.BTItemFPS,
         R.id.BTItemGraphics,
-        R.id.BTItemScreen,
-        R.id.BTItemTaskManager
+        R.id.BTItemScreen
     };
 
     private void hideAllSidebarPanels() {
@@ -2046,7 +2019,7 @@ public class XServerDisplayActivity extends AppCompatActivity {
         }
         setSidebarActiveItem(parentId);
         if (parentId == R.id.BTItemGraphics) requestRuntimeStatusProbe();
-        if (parentId != R.id.BTItemMouse && parentId != R.id.BTItemPause) {
+        if (parentId != R.id.BTItemMouse) {
             activeSidebarItemId = parentId;
             activeSidebarPanelId = subId;
         }
