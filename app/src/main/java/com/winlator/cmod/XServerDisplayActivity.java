@@ -969,7 +969,13 @@ public class XServerDisplayActivity extends AppCompatActivity {
                 xServerView.onPause();
             }
 
-            ProcessHelper.pauseAllWineProcesses();
+            // MHF: only pause Wine if user explicitly enabled "Suspend Wine when app is in background"
+            boolean pauseWine = androidx.preference.PreferenceManager
+                    .getDefaultSharedPreferences(this)
+                    .getBoolean("pause_resume_wine", false);
+            if (pauseWine) {
+                ProcessHelper.pauseAllWineProcesses();
+            }
         }
 
         savePlaytimeData();

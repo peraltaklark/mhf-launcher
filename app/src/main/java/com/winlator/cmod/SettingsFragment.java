@@ -336,7 +336,7 @@ public class SettingsFragment extends Fragment {
         cbShareClipboard.setChecked(preferences.getBoolean("share_android_clipboard", false));
         
         final CheckBox cbPauseWine = view.findViewById(R.id.CBPauseResumeWine);
-        cbPauseWine.setChecked(preferences.getBoolean("pause_resume_wine", true));
+        cbPauseWine.setChecked(preferences.getBoolean("pause_resume_wine", false));
         
         final CheckBox cbHighRefreshRate = view.findViewById(R.id.CBHighRefreshRate);
         cbHighRefreshRate.setChecked(preferences.getBoolean("high_refresh_rate_mode", false));
@@ -493,7 +493,7 @@ public class SettingsFragment extends Fragment {
                 preferences.getBoolean("enable_file_provider", true),
                 preferences.getBoolean("open_with_android_browser", false),
                 preferences.getBoolean("share_android_clipboard", false),
-                preferences.getBoolean("pause_resume_wine", true),
+                preferences.getBoolean("pause_resume_wine", false),
                 preferences.getBoolean("remove_loading_bar_when_booting_games", false),
                 preferences.getBoolean("enable_wine_debug", false),
                 preferences.getString("wine_debug_channels", DEFAULT_WINE_DEBUG_CHANNELS),
