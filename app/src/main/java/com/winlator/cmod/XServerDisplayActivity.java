@@ -3706,6 +3706,5 @@ public class XServerDisplayActivity extends AppCompatActivity {
             tv.setText(ok ? "Lossless.dll: Imported \u2713" : "Lossless.dll: Not imported");
         });
     }
-    }
 
 }
