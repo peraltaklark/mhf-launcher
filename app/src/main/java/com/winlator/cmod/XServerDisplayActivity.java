@@ -808,8 +808,8 @@ public class XServerDisplayActivity extends AppCompatActivity {
                 PendingIntent.FLAG_IMMUTABLE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_stat_ab_gear_0011)
-                .setContentTitle("MHFZ SD")
-                .setContentText("MHFZ SD is running, do not kill or swipe this notification")
+                .setContentTitle("MHFZ Launcher")
+                .setContentText("MHFZ Launcher is running, do not kill or swipe this notification")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(false);
