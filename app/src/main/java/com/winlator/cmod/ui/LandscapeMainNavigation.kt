@@ -148,9 +148,6 @@ fun LandscapeMainNavigation(
         Destination(Icons.Outlined.SportsEsports, "Input Controls", selected == R.id.main_menu_input_controls) {
             activity?.navigateToMainDestination(R.id.main_menu_input_controls)
         }
-        Destination(Icons.Outlined.Settings, "Settings", selected == R.id.main_menu_settings) {
-            activity?.navigateToMainDestination(R.id.main_menu_settings)
-        }
     }
 }
 

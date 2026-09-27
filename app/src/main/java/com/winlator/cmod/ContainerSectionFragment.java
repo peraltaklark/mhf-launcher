@@ -246,18 +246,12 @@ public class ContainerSectionFragment extends Fragment {
                 new ContainerSectionCallbacks() {
                     @Override
                     public void onManageComponents() {
-                        Intent intent = new Intent(requireContext(), OnboardingActivity.class);
-                        intent.putExtra(OnboardingActivity.EXTRA_COMPONENT_MANAGER, true);
-                        startActivity(intent);
+                // MHF: components manager removed
                     }
 
                     @Override
                     public void onInstallComponent(@NonNull String type, @NonNull String version) {
-                        Intent intent = new Intent(requireContext(), OnboardingActivity.class);
-                        intent.putExtra(OnboardingActivity.EXTRA_COMPONENT_MANAGER, true);
-                        intent.putExtra(OnboardingActivity.EXTRA_AUTO_INSTALL_TYPE, type);
-                        intent.putExtra(OnboardingActivity.EXTRA_AUTO_INSTALL_VERSION, version);
-                        startActivity(intent);
+                // MHF: component install removed
                     }
 
                     @Override

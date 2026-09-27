@@ -517,9 +517,7 @@ public class SettingsFragment extends Fragment {
         return new SettingsCallbacks() {
             @Override
             public void onOpenComponents() {
-                Intent intent = new Intent(requireContext(), OnboardingActivity.class);
-                intent.putExtra(OnboardingActivity.EXTRA_COMPONENT_MANAGER, true);
-                startActivity(intent);
+                // MHF: components manager removed
             }
 
             @Override

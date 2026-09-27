@@ -118,11 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         applyImmersiveMode();
 
-        if (!sharedPreferences.getBoolean(OnboardingActivity.PREF_ONBOARDING_COMPLETE, false)) {
-            startActivity(new Intent(this, OnboardingActivity.class));
-            finish();
-            return;
-        }
+        // MHF: onboarding removed
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && (Build.VERSION.SDK_INT < 33 || ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED))
             createNotificationChannel();
 

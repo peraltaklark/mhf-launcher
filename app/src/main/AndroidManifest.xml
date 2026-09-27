@@ -49,13 +49,6 @@
             android:name="com.winlator.cmod.store.SteamForegroundService"
             android:foregroundServiceType="dataSync"
             android:exported="false" />
-
-        <activity
-            android:name="com.winlator.cmod.OnboardingActivity"
-            android:theme="@style/AppThemeFullscreen.Dark"
-            android:screenOrientation="sensor"
-            android:exported="false" />
-
         <activity
             android:name="com.winlator.cmod.ui.settings.ContainersSettingsActivity"
             android:theme="@style/AppThemeFullscreen.Dark"
