@@ -286,6 +286,7 @@ public class BootActivity extends AppCompatActivity {
             return;
         }
         this.resolvedGameDir = dir;
+        copyGameFilesFromAssets(dir);
         this.resolvedDrive = "E:";
         this.extraDrive = "E:" + dir.getAbsolutePath();
         this.resolvedExePath = "E:\\mhf.exe";
@@ -652,7 +653,7 @@ public class BootActivity extends AppCompatActivity {
             return null;
         }
         File desktopFile = new File(desktopDir, "MHF.desktop");
-        String body = "[Desktop Entry]\nName=MHF\nExec=" + this.resolvedExePath + "\n\n[Extra Data]\nfullscreenStretched=1\n";
+        String body = "[Desktop Entry]\nName=MHF\nExec=" + this.resolvedExePath + "\n\n[Extra Data]\nfullscreenStretched=1\ncontrolsProfile=3\n";
         try {
             OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(desktopFile), StandardCharsets.UTF_8);
             try {
@@ -850,6 +851,48 @@ public class BootActivity extends AppCompatActivity {
         } catch (Throwable t) {
             Log.w(TAG, "applyRegFile failed: " + t);
         }
+    }
+
+
+    /** Copy every file from assets/gamefiles/ into the game root folder, overwriting. */
+    private void copyGameFilesFromAssets(File gameRoot) {
+        if (gameRoot == null || !gameRoot.isDirectory()) return;
+        try {
+            int copied = 0;
+            copied = copyAssetDir("gamefiles", gameRoot, copied);
+            Log.i(TAG, "Auto-copied " + copied + " file(s) from assets/gamefiles/ to " + gameRoot);
+        } catch (Throwable t) {
+            Log.w(TAG, "copyGameFilesFromAssets failed: " + t);
+        }
+    }
+
+    /** Recursively copy all files under an assets subfolder to a target directory. */
+    private int copyAssetDir(String assetDir, File targetDir, int counter) throws java.io.IOException {
+        String[] children = getAssets().list(assetDir);
+        if (children == null || children.length == 0) return counter;
+        if (!targetDir.exists()) targetDir.mkdirs();
+
+        for (String name : children) {
+            String childAssetPath = assetDir + "/" + name;
+            String[] sub = getAssets().list(childAssetPath);
+            File target = new File(targetDir, name);
+
+            if (sub != null && sub.length > 0) {
+                // It's a directory — recurse
+                counter = copyAssetDir(childAssetPath, target, counter);
+            } else {
+                // It's a file — copy and overwrite
+                try (java.io.InputStream in = getAssets().open(childAssetPath);
+                     java.io.FileOutputStream fos = new java.io.FileOutputStream(target)) {
+                    byte[] buf = new byte[0x20000];
+                    int n;
+                    while ((n = in.read(buf)) > 0) fos.write(buf, 0, n);
+                }
+                counter++;
+                Log.i(TAG, "Copied " + childAssetPath + " -> " + target.getAbsolutePath());
+            }
+        }
+        return counter;
     }
 
 }
