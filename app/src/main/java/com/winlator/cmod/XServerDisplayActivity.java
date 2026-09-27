@@ -151,6 +151,9 @@ import cn.sherlock.com.sun.media.sound.SF2Soundbank;
 
 public class XServerDisplayActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CODE_LOSSLESS_IMPORT = 0x9A21;
+
+
     // === MHF boot cover overlay ===
     private long bootCoverUntilMs = 0L;
     private ImageView bootCoverView = null;
@@ -1962,6 +1965,26 @@ public class XServerDisplayActivity extends AppCompatActivity {
         }
 
         View btItemExit = findViewById(R.id.BTItemExit);
+
+        // MHF: Lossless.dll import
+        View btLosslessImport = findViewById(R.id.BTLosslessImport);
+        if (btLosslessImport != null) {
+            btLosslessImport.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+                startActivityForResult(intent, REQUEST_CODE_LOSSLESS_IMPORT);
+            });
+        }
+        View btLosslessClear = findViewById(R.id.BTLosslessClear);
+        if (btLosslessClear != null) {
+            btLosslessClear.setOnClickListener(v -> {
+                java.io.File dll = LosslessDll.globalDllFile(XServerDisplayActivity.this);
+                if (dll != null && dll.exists()) dll.delete();
+                refreshLosslessStatus();
+            });
+        }
+        refreshLosslessStatus();
         if (btItemExit != null) {
             btItemExit.setOnClickListener(v -> {
                 drawerLayout.closeDrawers();
@@ -3663,6 +3686,31 @@ public class XServerDisplayActivity extends AppCompatActivity {
                 bootCoverView = null;
             }
         } catch (Throwable ignored) {}
+    }
+
+
+    private void refreshLosslessStatus() {
+        runOnUiThread(() -> {
+            android.widget.TextView tv = findViewById(R.id.TVLosslessStatus);
+            if (tv == null) return;
+            boolean ok = LosslessDll.isGlobalDllAvailable(this);
+            tv.setText(ok ? "Lossless.dll: Imported \u2713" : "Lossless.dll: Not imported");
+        });
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_LOSSLESS_IMPORT) {
+            if (data != null && data.getData() != null
+                    && LosslessDll.importGlobalLosslessDll(this, data.getData())) {
+                android.widget.Toast.makeText(this, "Lossless.dll imported", android.widget.Toast.LENGTH_SHORT).show();
+                refreshLosslessStatus();
+            } else {
+                android.widget.Toast.makeText(this, "Unable to import Lossless.dll", android.widget.Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 }
