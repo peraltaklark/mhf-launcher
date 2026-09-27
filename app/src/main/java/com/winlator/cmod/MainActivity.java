@@ -107,13 +107,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         isDarkMode = sharedPreferences.getBoolean("dark_mode", true);
 
-        if (isDarkMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            setTheme(R.style.AppTheme_Dark);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            setTheme(R.style.AppTheme);
+        // MHF: only call setDefaultNightMode when it actually changes, otherwise
+        // the first call (UNSPECIFIED -> YES) triggers a process-wide config change
+        // that relaunches the running XServerDisplayActivity (killing Wine).
+        int targetNightMode = isDarkMode
+                ? AppCompatDelegate.MODE_NIGHT_YES
+                : AppCompatDelegate.MODE_NIGHT_NO;
+        if (AppCompatDelegate.getDefaultNightMode() != targetNightMode) {
+            AppCompatDelegate.setDefaultNightMode(targetNightMode);
         }
+        setTheme(isDarkMode ? R.style.AppTheme_Dark : R.style.AppTheme);
 
         super.onCreate(savedInstanceState);
         applyImmersiveMode();
