@@ -3169,6 +3169,11 @@ public class XServerDisplayActivity extends AppCompatActivity {
     }
 
     static String resolveGraphicsWrapperArchiveName(String graphicsWrapper) {
+        // MHF: force custom wrapper-leegao.tzst on non-Snapdragon SoCs
+        // (MediaTek / Exynos / Kirin / Unisoc — all use Mali/other GPUs, not Adreno)
+        if (!"Snapdragon".equals(com.winlator.cmod.core.SocProfile.socVendor())) {
+            return "wrapper-leegao";
+        }
         switch (graphicsWrapper == null ? "" : graphicsWrapper) {
             case "wrapper-winnative":
             case "wrapper-original":
