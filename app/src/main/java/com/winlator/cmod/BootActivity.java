@@ -470,7 +470,7 @@ public class BootActivity extends AppCompatActivity {
         data.put("graphicsDriver", Container.DEFAULT_GRAPHICS_DRIVER);
         data.put("graphicsDriverConfig", putConfigValue(Container.DEFAULT_GRAPHICSDRIVERCONFIG, "version", driverId));
         data.put("rendererNative", false);
-        data.put("rendererPresentMode", "fifo");
+        data.put("rendererPresentMode", "mailbox");
         data.put("rendererDriverId", driverId);
         data.put("rendererFilterMode", 2);
         data.put("dxwrapper", Container.DEFAULT_DXWRAPPER);
@@ -504,8 +504,8 @@ public class BootActivity extends AppCompatActivity {
             config = putConfigValue(config, "version", driverId);
             changed = true;
         }
-        if (!"fifo".equals(configValue(config, "presentMode"))) {
-            config = putConfigValue(config, "presentMode", "fifo");
+        if (!"mailbox".equals(configValue(config, "presentMode"))) {
+            config = putConfigValue(config, "presentMode", "mailbox");
             changed = true;
         }
         if (changed) {
