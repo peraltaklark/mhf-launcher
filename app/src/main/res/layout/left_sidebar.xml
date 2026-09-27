@@ -114,6 +114,12 @@
                 app:tint="@color/ingame_sidebar_power" />
         </LinearLayout>
     </LinearLayout>
+
+    <include
+        layout="@layout/left_sidebar_original"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <com.winlator.cmod.ui.RenderingSidebarPolisherView
         android:layout_width="0dp"
         android:layout_height="0dp"
