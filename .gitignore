@@ -16,3 +16,5 @@ app/src/main/assets/audio/alsa-oboe.tzst
 app/src/main/assets/audio/alsa-oboe.version
 Untitled.jks
 app/.idea/
+*.orig
+*.orig-*
