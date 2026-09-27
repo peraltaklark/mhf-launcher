@@ -61,7 +61,7 @@
             android:theme="@style/AppTheme.Dark"
             android:screenOrientation="sensor"
             android:exported="false"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|density|navigation">
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard|navigation|uiMode|density|fontScale|layoutDirection|locale|touchscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 
@@ -76,8 +76,9 @@
             android:launchMode="singleTask"
             android:supportsPictureInPicture="true"
             android:screenOrientation="sensorLandscape"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|density|navigation"
-            android:exported="true" />
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard|navigation|uiMode|density|fontScale|layoutDirection|locale|touchscreen"
+            android:exported="true" 
+            />
 
         <activity
             android:name="com.winlator.cmod.XrActivity"
