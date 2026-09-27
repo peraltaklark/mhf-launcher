@@ -1,5 +1,5 @@
 {
-  "_comment": "Device auto-detect table for the RE7 port. SnapdragonProfile.java is the runtime source of truth; this file documents the mapping.",
+  "_comment": "Device auto-detect table for the RE7 port. SocProfile.java is the runtime source of truth; this file documents the mapping.",
   "_scope": "Wide Snapdragon: Adreno 6xx (Pad 5 / 860) through 8 Elite Gen 5. One APK, multiple Turnip packs, auto-pick + manual override.",
 
   "screen_policy": {
