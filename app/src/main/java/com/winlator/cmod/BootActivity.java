@@ -38,7 +38,7 @@ import com.winlator.cmod.core.DefaultVersion;
 import com.winlator.cmod.core.FileUtils;
 import com.winlator.cmod.core.GameFolderPrefs;
 import com.winlator.cmod.core.OpenGLDriverDefaults;
-import com.winlator.cmod.core.SnapdragonProfile;
+import com.winlator.cmod.core.SocProfile;
 import com.winlator.cmod.core.WineInfo;
 import com.winlator.cmod.core.WineRuntimeGuard;
 import com.winlator.cmod.xenvironment.ImageFsInstaller;
@@ -65,7 +65,7 @@ public class BootActivity extends AppCompatActivity {
     private TextView folderPathView;
     private ProgressBar importProgress;
     private TextView importStatus;
-    private SnapdragonProfile profile;
+    private SocProfile profile;
     private Spinner qualitySpinner;
     private File resolvedGameDir;
     private Button selectFolderButton;
@@ -97,7 +97,7 @@ public class BootActivity extends AppCompatActivity {
         setupDeviceSpinners();
         refreshFolderLabel();
         refreshProfileUi();
-        Log.i(TAG, "boot start; soc=" + SnapdragonProfile.socModel() + " sdk=" + Build.VERSION.SDK_INT);
+        Log.i(TAG, "boot start; soc=" + SocProfile.socModel() + " sdk=" + Build.VERSION.SDK_INT);
         installBootWallpaper();
         startPermissionFlow();
     }
@@ -109,15 +109,15 @@ public class BootActivity extends AppCompatActivity {
 
     private void setupDeviceSpinners() {
         if (this.driverSpinner != null) {
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, SnapdragonProfile.DRIVER_LABELS);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, SocProfile.DRIVER_LABELS);
             this.driverSpinner.setAdapter((SpinnerAdapter) adapter);
             this.driverSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() { // from class: com.winlator.cmod.BootActivity.1
                 @Override // android.widget.AdapterView.OnItemSelectedListener
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (BootActivity.this.suppressSpinnerCallbacks || position < 0 || position >= SnapdragonProfile.DRIVER_CHOICES.length) {
+                    if (BootActivity.this.suppressSpinnerCallbacks || position < 0 || position >= SocProfile.DRIVER_CHOICES.length) {
                         return;
                     }
-                    MhfDevicePrefs.setDriverOverride(BootActivity.this, SnapdragonProfile.DRIVER_CHOICES[position]);
+                    MhfDevicePrefs.setDriverOverride(BootActivity.this, SocProfile.DRIVER_CHOICES[position]);
                     BootActivity.this.refreshProfileUi();
                 }
 
@@ -127,15 +127,15 @@ public class BootActivity extends AppCompatActivity {
             });
         }
         if (this.qualitySpinner != null) {
-            ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, SnapdragonProfile.QUALITY_LABELS);
+            ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, SocProfile.QUALITY_LABELS);
             this.qualitySpinner.setAdapter((SpinnerAdapter) adapter2);
             this.qualitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() { // from class: com.winlator.cmod.BootActivity.2
                 @Override // android.widget.AdapterView.OnItemSelectedListener
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (BootActivity.this.suppressSpinnerCallbacks || position < 0 || position >= SnapdragonProfile.QUALITY_CHOICES.length) {
+                    if (BootActivity.this.suppressSpinnerCallbacks || position < 0 || position >= SocProfile.QUALITY_CHOICES.length) {
                         return;
                     }
-                    MhfDevicePrefs.setQualityOverride(BootActivity.this, SnapdragonProfile.QUALITY_CHOICES[position]);
+                    MhfDevicePrefs.setQualityOverride(BootActivity.this, SocProfile.QUALITY_CHOICES[position]);
                     BootActivity.this.refreshProfileUi();
                 }
 
@@ -152,12 +152,12 @@ public class BootActivity extends AppCompatActivity {
         try {
             if (this.driverSpinner != null) {
                 String cur = MhfDevicePrefs.getDriverOverride(this);
-                int idx = indexOf(SnapdragonProfile.DRIVER_CHOICES, cur);
+                int idx = indexOf(SocProfile.DRIVER_CHOICES, cur);
                 this.driverSpinner.setSelection(Math.max(0, idx), false);
             }
             if (this.qualitySpinner != null) {
                 String cur2 = MhfDevicePrefs.getQualityOverride(this);
-                int idx2 = indexOf(SnapdragonProfile.QUALITY_CHOICES, cur2);
+                int idx2 = indexOf(SocProfile.QUALITY_CHOICES, cur2);
                 this.qualitySpinner.setSelection(Math.max(0, idx2), false);
             }
         } finally {
@@ -179,18 +179,18 @@ public class BootActivity extends AppCompatActivity {
 
     /* JADX INFO: Access modifiers changed from: private */
     public void refreshProfileUi() {
-        this.profile = SnapdragonProfile.resolve(this);
+        this.profile = SocProfile.resolve(this);
         if (this.socInfoView == null || this.profile == null) {
             return;
         }
         String screen = this.profile.screenSizeOr(this, displayLandscapeSize());
-        String form = SnapdragonProfile.detectFormFactor(this, displayLandscapeSize());
+        String form = SocProfile.detectFormFactor(this, displayLandscapeSize());
         this.socInfoView.setText("SoC: " + this.profile.soc + " — " + this.profile.marketing + "\nAuto Turnip: " + this.profile.autoDriverId + "\nUsing: " + this.profile.driverId + (this.profile.driverOverridden ? " (manual)" : " (auto)") + " · quality " + this.profile.qualityId + " · " + this.profile.frameRate + " fps · sharp " + this.profile.sharpness + "\nScreen: " + screen + " (" + form + ")");
     }
 
-    private SnapdragonProfile profile() {
+    private SocProfile profile() {
         if (this.profile == null) {
-            this.profile = SnapdragonProfile.resolve(this);
+            this.profile = SocProfile.resolve(this);
         }
         return this.profile;
     }
@@ -357,7 +357,7 @@ public class BootActivity extends AppCompatActivity {
         showFolderPanel(false);
         Container container = null;
         showImportUi(false, null);
-        SnapdragonProfile p = profile();
+        SocProfile p = profile();
         String driverId = p.driverId;
         Log.i(TAG, "driver=" + driverId + " filterMode=2 quality=" + p.qualityId + " fps=" + p.frameRate);
         ContentsManager contentsManager = new ContentsManager(this);
@@ -463,7 +463,7 @@ public class BootActivity extends AppCompatActivity {
     private JSONObject buildContainerData(ContainerManager manager, ContentsManager contentsManager, String runtime, String driverId) throws Exception {
         WineInfo wineInfo = WineInfo.fromIdentifier(this, contentsManager, runtime);
         boolean arm64ec = wineInfo.isArm64EC();
-        SnapdragonProfile p = profile();
+        SocProfile p = profile();
         JSONObject data = new JSONObject();
         data.put(HintConstants.AUTOFILL_HINT_NAME, CONTAINER_NAME);
         data.put("screenSize", p.screenSizeOr(this, displayLandscapeSize()));
@@ -611,7 +611,7 @@ public class BootActivity extends AppCompatActivity {
 
     private void finishWith(ContainerManager manager, Container container) {
         try {
-            SnapdragonProfile p = profile();
+            SocProfile p = profile();
             container.setDrives(drivesString());
             container.setRendererNative(false);
             container.setRendererFilterMode(2);
@@ -636,7 +636,7 @@ public class BootActivity extends AppCompatActivity {
             this.busy = false;
             return;
         }
-        Log.i(TAG, "launching container=" + container.id + " shortcut=" + desktopFile + " driver=" + profile().driverId + " quality=" + profile().qualityId + " screen=" + profile().screenSizeOr(this, displayLandscapeSize()) + " form=" + SnapdragonProfile.detectFormFactor(this, displayLandscapeSize()));
+        Log.i(TAG, "launching container=" + container.id + " shortcut=" + desktopFile + " driver=" + profile().driverId + " quality=" + profile().qualityId + " screen=" + profile().screenSizeOr(this, displayLandscapeSize()) + " form=" + SocProfile.detectFormFactor(this, displayLandscapeSize()));
         Intent intent = new Intent(this, (Class<?>) XServerDisplayActivity.class);
         intent.putExtra("container_id", container.id);
         intent.putExtra("shortcut_path", desktopFile.getAbsolutePath());
@@ -872,16 +872,41 @@ public class BootActivity extends AppCompatActivity {
         if (children == null || children.length == 0) return counter;
         if (!targetDir.exists()) targetDir.mkdirs();
 
+        boolean isSnapdragon = "Snapdragon".equals(
+                com.winlator.cmod.core.SocProfile.socVendor());
+        Log.i(TAG, "copyAssetDir(" + assetDir + ") snapdragon=" + isSnapdragon);
+
         for (String name : children) {
             String childAssetPath = assetDir + "/" + name;
             String[] sub = getAssets().list(childAssetPath);
-            File target = new File(targetDir, name);
+
+            // --- conditional rename for d3d8/d3d9 sarek variants ---
+            String outputName = name;
+            if (!isSnapdragon) {
+                if (name.equals("d3d8-sarek.dll")) {
+                    outputName = "d3d8.dll";
+                } else if (name.equals("d3d9-sarek.dll")) {
+                    outputName = "d3d9.dll";
+                } else if (name.equals("d3d8.dll") || name.equals("d3d9.dll")) {
+                    // Skip base variants on non-Snapdragon — the sarek files take over
+                    Log.i(TAG, "Skipping " + childAssetPath + " (will be replaced by sarek)");
+                    continue;
+                }
+            } else {
+                // Snapdragon: skip the sarek variants
+                if (name.equals("d3d8-sarek.dll") || name.equals("d3d9-sarek.dll")) {
+                    Log.i(TAG, "Skipping " + childAssetPath + " (Snapdragon uses base)");
+                    continue;
+                }
+            }
+
+            File target = new File(targetDir, outputName);
 
             if (sub != null && sub.length > 0) {
-                // It's a directory — recurse
+                // Directory — recurse
                 counter = copyAssetDir(childAssetPath, target, counter);
             } else {
-                // It's a file — copy and overwrite
+                // File — copy and overwrite
                 try (java.io.InputStream in = getAssets().open(childAssetPath);
                      java.io.FileOutputStream fos = new java.io.FileOutputStream(target)) {
                     byte[] buf = new byte[0x20000];
@@ -889,7 +914,8 @@ public class BootActivity extends AppCompatActivity {
                     while ((n = in.read(buf)) > 0) fos.write(buf, 0, n);
                 }
                 counter++;
-                Log.i(TAG, "Copied " + childAssetPath + " -> " + target.getAbsolutePath());
+                Log.i(TAG, "Copied " + childAssetPath + " -> " + target.getAbsolutePath()
+                        + (name.equals(outputName) ? "" : " (renamed from " + name + ")"));
             }
         }
         return counter;
