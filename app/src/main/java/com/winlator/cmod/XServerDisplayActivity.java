@@ -955,6 +955,17 @@ public class XServerDisplayActivity extends AppCompatActivity {
         handler.postDelayed(savePlaytimeRunnable, SAVE_INTERVAL_MS);
         if (!isInPictureInPictureMode())
             ProcessHelper.resumeAllWineProcesses();
+
+        // MHF: force surface redraw when returning from another activity,
+        // otherwise the first resume shows a black screen.
+        if (xServerView != null) {
+            xServerView.post(() -> {
+                if (xServerView == null) return;
+                int w = xServerView.getWidth();
+                int h = xServerView.getHeight();
+                if (w > 0 && h > 0) xServerView.onSurfaceChanged(w, h);
+            });
+        }
     }
 
     @Override
