@@ -247,7 +247,6 @@ private fun LibraryLandscapeHeader(
         LibraryTopIcon(Icons.Outlined.Add, false, onAddGame)
         LibraryTopIcon(Icons.Outlined.Home, true) {}
         LibraryTopIcon(Icons.Outlined.SportsEsports, false) { activity?.navigateToMainDestination(R.id.main_menu_input_controls) }
-        LibraryTopIcon(Icons.Outlined.Settings, false) { activity?.navigateToMainDestination(R.id.main_menu_settings) }
         LibraryOrientationMenu(activity)
     }
 }
