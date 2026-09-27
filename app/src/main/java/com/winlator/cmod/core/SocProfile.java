@@ -97,7 +97,7 @@ public final class SocProfile {
         String qualityId = qualityOverridden ? qualityOverride : autoQualityId;
 
         // Frame rate and sharpness per quality tier
-        int frameRate = 35;
+        int frameRate = 0;
         int sharpness;
         switch (qualityId) {
             case "flagship": sharpness = 100; break;
@@ -214,7 +214,7 @@ public final class SocProfile {
     }
 
     public String buildEnvVars() {
-        String env = "WINE_FAST_YIELD=1 WRAPPER_MAX_IMAGE_COUNT=0 VKD3D_SHADER_MODEL=6_6 MESA_SHADER_CACHE_DISABLE=false MESA_SHADER_CACHE_MAX_SIZE=512MB WINEESYNC=1 WINEDEBUG=-all DXVK_FRAME_RATE=" + this.frameRate + " DXVK_STATE_CACHE=1 DXVK_DISABLE_TIMELINE_SEMAPHORES=1 BOX64_DYNAREC_BIGBLOCK=1 BOX64_DYNAREC_STRONGMEM=0 BOX64_DYNAREC_SAFEFLAGS=2";
+        String env = "WINE_FAST_YIELD=1 WRAPPER_MAX_IMAGE_COUNT=0 VKD3D_SHADER_MODEL=6_6 MESA_SHADER_CACHE_DISABLE=false MESA_SHADER_CACHE_MAX_SIZE=512MB WINEESYNC=1 WINEDEBUG=-all DXVK_STATE_CACHE=1 DXVK_DISABLE_TIMELINE_SEMAPHORES=1 BOX64_DYNAREC_BIGBLOCK=1 BOX64_DYNAREC_STRONGMEM=0 BOX64_DYNAREC_SAFEFLAGS=2";
         if (DRIVER_A8XX.equals(this.driverId)) {
             return env + " TU_DEBUG=sysmem";
         }
@@ -222,11 +222,9 @@ public final class SocProfile {
     }
 
     public String dxwrapperConfig(String defaults) {
-        String cfg = (defaults == null ? "" : defaults).replace(",framerate=0", ",framerate=" + this.frameRate).replace(",async=0", ",async=1").replace(",asyncCache=0", ",asyncCache=1");
-        if (cfg.contains("framerate=")) {
-            return cfg.replaceAll("framerate=\\d+", "framerate=" + this.frameRate);
-        }
-        return cfg;
+        return (defaults == null ? "" : defaults)
+                .replace(",async=0", ",async=1")
+                .replace(",asyncCache=0", ",asyncCache=1");
     }
 
     public static String socModel() {
