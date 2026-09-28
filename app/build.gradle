@@ -107,7 +107,8 @@ android {
     buildToolsVersion "35.0.0"
 
     defaultConfig {
-        applicationId "com.ludashi.benchmark"
+        resValue "string", "app_name", (project.findProperty("APP_NAME") ?: "MHFZ Launcher")
+        applicationId (project.findProperty("APP_ID") ?: "com.mhfz.launcher")
         minSdkVersion 26
         // We’re preserving Winlator’s request to keep targetSdkVersion at 28
         targetSdkVersion 28
