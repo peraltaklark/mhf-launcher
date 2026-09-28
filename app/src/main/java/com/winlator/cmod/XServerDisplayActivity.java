@@ -3062,6 +3062,8 @@ public class XServerDisplayActivity extends AppCompatActivity {
         }
 
         boolean useDRI3 = preferences.getBoolean("use_dri3", true);
+        // Force-disable DRI3 on Adreno 630 (SD845/850)
+        if (!com.winlator.cmod.core.SocProfile.isDri3Supported()) useDRI3 = false;
         if (!useDRI3) {
             envVars.put("MESA_VK_WSI_DEBUG", "sw");
         }

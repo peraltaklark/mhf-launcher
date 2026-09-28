@@ -227,6 +227,16 @@ public final class SocProfile {
                 .replace(",asyncCache=0", ",asyncCache=1");
     }
 
+/** Adreno 630 (SDM845 / SDM850) has unstable DRI3 on many OEM ROMs. */
+    public static boolean isDri3Supported() {
+        String soc = socModel();
+        if (soc == null || soc.isEmpty()) return true;
+        String u = soc.toUpperCase(java.util.Locale.ROOT);
+        if (u.startsWith("SDM845")) return false;
+        if (u.startsWith("SDM850")) return false;
+        return true;
+    }
+
     public static String socModel() {
         if (Build.VERSION.SDK_INT < 31 || Build.SOC_MODEL == null || Build.SOC_MODEL.isEmpty()) {
             return Build.HARDWARE == null ? "" : Build.HARDWARE;
