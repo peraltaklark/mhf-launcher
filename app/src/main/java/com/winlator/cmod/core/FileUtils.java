@@ -345,16 +345,11 @@ public abstract class FileUtils {
         }
 
         Log.d(TAG, "Document ID: " + documentId);
-        String[] split = documentId.split(":");
+        String[] split = documentId.split(":", 2);
         String type = split[0];
         String path = split.length > 1 ? split[1] : "";
 
-        try {
-            path = URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, "Error decoding path: " + path, e);
-            return null;
-        }
+        // documentId is already decoded by DocumentsContract; do not decode again
 
         if ("primary".equalsIgnoreCase(type)) {
             return Environment.getExternalStorageDirectory() + "/" + path;
