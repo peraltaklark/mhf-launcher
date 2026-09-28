@@ -4,11 +4,39 @@ on:
   workflow_dispatch:
   push:
     branches:
+      - 'main'
       - 'ludashi-plus/4.0'
 
 jobs:
   build:
     runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        variant:
+          - name: "MHFZ Launcher Ludashi"
+            app_id: "com.ludashi.benchmark"
+            short: "ludashi"
+          - name: "MHFZ Launcher Antutu"
+            app_id: "com.antutu.ABenchMark"
+            short: "antutu"
+          - name: "MHFZ Launcher Genshin"
+            app_id: "com.miHoYo.GenshinImpact"
+            short: "genshin"
+          - name: "MHFZ Launcher Naraka"
+            app_id: "com.netease.l22"
+            short: "naraka"
+          - name: "MHFZ Launcher PUBG"
+            app_id: "com.tencent.ig"
+            short: "pubg"
+          - name: "MHFZ Launcher AI Benchmark"
+            app_id: "com.antutu.aibenchmark"
+            short: "ai-benchmark"
+          - name: "MHFZ Launcher"
+            app_id: "com.mhfz.launcher"
+            short: "mhfz"
+
+    name: Build ${{ matrix.variant.name }}
 
     steps:
       - name: Checkout source
@@ -41,12 +69,14 @@ jobs:
         run: git submodule update --init --recursive
 
       - name: Build APK
-        run: ./gradlew assembleDebug --no-daemon
+        run: |
+          ./gradlew assembleDebug --no-daemon \
+            -PAPP_ID="${{ matrix.variant.app_id }}" \
+            -PAPP_NAME="${{ matrix.variant.name }}"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Winlator-Ludashi-Plus-4.0-debug
-          path: |
-            app/build/outputs/apk/debug/*.apk
+          name: MHFZ-${{ matrix.variant.short }}-debug
+          path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
