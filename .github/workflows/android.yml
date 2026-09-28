@@ -88,3 +88,23 @@ jobs:
           name: MHFZ-${{ matrix.variant.short }}-${{ github.run_number }}
           path: app/build/outputs/apk/release/*.apk
           if-no-files-found: error
+
+      - name: Rename APK for release
+        run: |
+          mkdir -p release-upload
+          SRC=$(ls app/build/outputs/apk/release/*.apk | head -1)
+          cp "$SRC" "release-upload/MHFZ-${{ matrix.variant.short }}-${{ github.run_number }}.apk"
+          ls -la release-upload/
+
+      - name: Publish to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Build ${{ github.run_number }}
+          body: |
+            Automated multi-variant build.
+            Commit: ${{ github.sha }}
+          files: release-upload/*.apk
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
