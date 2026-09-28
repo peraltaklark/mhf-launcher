@@ -945,7 +945,7 @@ public class XServerDisplayActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_LOSSLESS_IMPORT) {
             if (data != null && data.getData() != null
                     && LosslessDll.importGlobalLosslessDll(this, data.getData())) {
-                android.widget.Toast.makeText(this, "Lossless.dll imported", android.widget.Toast.LENGTH_SHORT).show();
+                android.widget.Toast.makeText(this, "Lossless.dll imported. Restart the app to enable frame generation.", android.widget.Toast.LENGTH_LONG).show();
                 refreshLosslessStatus();
             } else {
                 android.widget.Toast.makeText(this, "Unable to import Lossless.dll", android.widget.Toast.LENGTH_SHORT).show();
