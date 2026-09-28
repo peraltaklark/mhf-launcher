@@ -645,6 +645,10 @@ public class VulkanXServerView extends XServerRendererView implements SurfaceHol
                             ? "this Renderer Driver lacks Vulkan 1.3. " : "this Renderer Driver lacks a required Vulkan feature. ")
                             + "Set Renderer Driver to a Turnip driver, then relaunch the game."
                             : error + (error.endsWith(".") ? "" : "."));
+            if (!winFg && error.contains("Import your own Lossless.dll")
+                    && com.winlator.cmod.core.LosslessDll.isGlobalDllAvailable(getContext())) {
+                frameGenError = "Lossless.dll is imported. Restart the app to enable LSFG Native.";
+            }
             final String message = frameGenError;
             post(() -> {
                 Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();

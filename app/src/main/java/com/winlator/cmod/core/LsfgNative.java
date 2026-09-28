@@ -125,7 +125,7 @@ public final class LsfgNative {
             case STATUS_OK:
                 return "Ready";
             case STATUS_NOT_INSTALLED:
-                return "Import your own Lossless.dll in Settings first";
+                return "Import your own Lossless.dll";
             case STATUS_UNREADABLE_FILE:
                 return "Lossless.dll could not be read";
             case STATUS_NOT_PORTABLE_EXECUTABLE:
