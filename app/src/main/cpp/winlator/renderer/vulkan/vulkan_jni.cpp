@@ -50,6 +50,13 @@ Java_com_winlator_cmod_widget_VulkanXServerView_nativeConfigureFrameGen(
     return nullptr;
 }
 
+extern "C" JNIEXPORT jfloat JNICALL
+Java_com_winlator_cmod_widget_VulkanXServerView_nativeGetPresentedRate(
+    JNIEnv*, jobject, jlong handle) {
+    auto* ctx = reinterpret_cast<VulkanRendererContext*>(handle);
+    return ctx ? ctx->presentedRate() : 0.0f;
+}
+
 static void* openAdrenotoolsDriver(const char* driverPath, const char* libraryName,
                                    const char* nativeLibDir) {
     if (!driverPath || !libraryName || !nativeLibDir) return nullptr;

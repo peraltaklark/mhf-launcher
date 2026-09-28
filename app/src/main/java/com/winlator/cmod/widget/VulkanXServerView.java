@@ -610,6 +610,13 @@ public class VulkanXServerView extends XServerRendererView implements SurfaceHol
         queueEvent(() -> { synchronized (lock) { if (nativeHandle != 0) applyFrameGenNative(); } });
     }
 
+    private static native float nativeGetPresentedRate(long handle);
+
+    public float getPresentedRate() {
+        try { return nativeHandle != 0 ? nativeGetPresentedRate(nativeHandle) : 0f; }
+        catch (Throwable t) { return 0f; }
+    }
+
     public String getFrameGenError() { return frameGenError; }
 
     public void setFrameGenStatusListener(Runnable listener) {

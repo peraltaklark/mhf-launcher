@@ -153,7 +153,23 @@ public class FrameRating extends FrameLayout implements Runnable {
     public void run() {
         if (!userEnabled) return;
         if (getVisibility() == GONE) setVisibility(View.VISIBLE);
-        tvFPS.setText(String.format(Locale.ENGLISH, "%.1f", lastFPS));
+        float presented = readPresentedFps();
+        if (lastFPS > 0f && presented > lastFPS * 1.3f)
+            tvFPS.setText(String.format(Locale.ENGLISH, "%.0f/%.0f", lastFPS, presented));
+        else
+            tvFPS.setText(String.format(Locale.ENGLISH, "%.1f", lastFPS));
         tvRAM.setText(getAvailableRAM() + " GB Used / " + totalRAM + " Total");
+    }
+
+    private float readPresentedFps() {
+        try {
+            if (context instanceof com.winlator.cmod.XServerDisplayActivity) {
+                XServerRendererView v =
+                        ((com.winlator.cmod.XServerDisplayActivity) context).getXServerView();
+                if (v instanceof VulkanXServerView)
+                    return ((VulkanXServerView) v).getPresentedRate();
+            }
+        } catch (Throwable ignored) {}
+        return 0f;
     }
 }

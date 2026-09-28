@@ -506,6 +506,7 @@ public:
     uint32_t fgSwapchainCapacity_ = 0;
     void setLsfgCachePath(const char* path);
     void setFrameGenArmed(bool armed, int multiplier);
+    float presentedRate() const { return fgPresentedRate_; }
     void setFrameGenTuning(float flowScale, float refreshHz);
     void setFrameGenEngine(int kind);
     void setWinFgTuning(int model, int perfPreset);

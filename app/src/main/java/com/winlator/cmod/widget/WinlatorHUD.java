@@ -716,12 +716,27 @@ public class WinlatorHUD extends View {
         snapFps = frames * 1_000_000_000f / dt;
         lastFpsNs = now;
 
-        String value = String.format(Locale.US, "%.0f", snapFps);
+        float presentedFps = readPresentedFps();
+        String value = (snapFps > 0f && presentedFps > snapFps * 1.3f)
+                ? String.format(Locale.US, "%.0f/%.0f", snapFps, presentedFps)
+                : String.format(Locale.US, "%.0f", snapFps);
         if (!value.equals(strFps)) {
             strFps = value;
             wDynFps = pVal.measureText(strFps);
             if (wDynFps > wValFps) requestRelayout();
         }
+    }
+
+    private float readPresentedFps() {
+        try {
+            Context c = getContext();
+            if (c instanceof XServerDisplayActivity) {
+                XServerRendererView v = ((XServerDisplayActivity) c).getXServerView();
+                if (v instanceof VulkanXServerView)
+                    return ((VulkanXServerView) v).getPresentedRate();
+            }
+        } catch (Throwable ignored) {}
+        return 0f;
     }
 
     @Override
