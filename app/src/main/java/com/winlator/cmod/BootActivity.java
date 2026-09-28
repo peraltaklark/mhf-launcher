@@ -185,7 +185,7 @@ public class BootActivity extends AppCompatActivity {
         }
         String screen = this.profile.screenSizeOr(this, displayLandscapeSize());
         String form = SocProfile.detectFormFactor(this, displayLandscapeSize());
-        this.socInfoView.setText("SoC: " + this.profile.soc + " — " + this.profile.marketing + "\nAuto Turnip: " + this.profile.autoDriverId + "\nUsing: " + this.profile.driverId + (this.profile.driverOverridden ? " (manual)" : " (auto)") + " · quality " + this.profile.qualityId + " · " + this.profile.frameRate + " fps · sharp " + this.profile.sharpness + "\nScreen: " + screen + " (" + form + ")");
+        this.socInfoView.setText("SoC: " + this.profile.soc + " — " + this.profile.marketing + "\nAuto driver: " + this.profile.autoDriverId + "\nUsing: " + this.profile.driverId + (this.profile.driverOverridden ? " (manual)" : " (auto)") + " · quality " + this.profile.qualityId + " · " + this.profile.frameRate + " fps · sharp " + this.profile.sharpness + "\nScreen: " + screen + " (" + form + ")");
     }
 
     private SocProfile profile() {
@@ -286,7 +286,6 @@ public class BootActivity extends AppCompatActivity {
             return;
         }
         this.resolvedGameDir = dir;
-        copyGameFilesFromAssets(dir);
         this.resolvedDrive = "E:";
         this.extraDrive = "E:" + dir.getAbsolutePath();
         this.resolvedExePath = "E:\\mhf.exe";
@@ -429,6 +428,10 @@ public class BootActivity extends AppCompatActivity {
 
     /* JADX INFO: Access modifiers changed from: private */
     public void createContainerAndLaunch(final ContainerManager manager, ContentsManager contentsManager, String driverId) {
+        // Extract gamefiles only on first container creation
+        if (this.resolvedGameDir != null) {
+            copyGameFilesFromAssets(this.resolvedGameDir);
+        }
         String runtime = resolveRuntime(contentsManager);
         if (runtime == null) {
             toast("Bundled Wine/Proton runtime is missing from the APK.");
