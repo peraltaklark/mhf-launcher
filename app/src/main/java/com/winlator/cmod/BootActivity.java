@@ -260,7 +260,7 @@ public class BootActivity extends AppCompatActivity {
         File picked = new File(path);
         File root = GameFolderPrefs.findGameRoot(picked);
         if (root == null) {
-            toast("Need the uncompressed base game folder:\nmhf.exe and game files\n(no DLC required).");
+            toast("Couldn't find the game in that folder. Select the uncompressed game folder.");
             return;
         }
         GameFolderPrefs.save(this, root, uri);
@@ -331,7 +331,7 @@ public class BootActivity extends AppCompatActivity {
             this.folderPathView.setText("Using in place:\n" + root.getAbsolutePath());
             this.selectFolderButton.setText(com.winlator.cmod.R.string.change_game_folder);
         } else {
-            this.folderPathView.setText("Select the uncompressed PC game folder (mhf.exe). Files stay where they are.");
+            this.folderPathView.setText("Select the uncompressed game folder. Files stay where they are.");
             this.selectFolderButton.setText(com.winlator.cmod.R.string.select_game_folder);
         }
     }
