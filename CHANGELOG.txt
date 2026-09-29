@@ -1,0 +1,4 @@
+- HUD: show measured presented FPS with frame generation (real/presented)
+- LSFG: show restart message when DLL imported but not loaded; shorten missing DLL message
+- Lossless import: skip Wine freeze during picker, restart toast, log exit caller
+- Remove mhl.dll from gamefiles
