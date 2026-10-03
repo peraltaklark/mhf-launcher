@@ -778,6 +778,14 @@ public class InputControlsView extends View {
 
     public void handleInputEvent(ExternalController controller, Binding binding, boolean isActionDown, float offset, boolean sendUpdate) {
         WinHandler winHandler = xServer != null ? xServer.getWinHandler() : null;
+        if (binding == Binding.SPECIAL_KEYBOARD) {
+            if (isActionDown && getContext() instanceof androidx.appcompat.app.AppCompatActivity) {
+                final androidx.appcompat.app.AppCompatActivity act =
+                    (androidx.appcompat.app.AppCompatActivity) getContext();
+                post(() -> com.winlator.cmod.core.AppUtils.showKeyboard(act));
+            }
+            return;
+        }
         if (binding.isGamepad()) {
             GamepadState state = (controller != null) ? controller.remappedState : profile.getGamepadState();
 

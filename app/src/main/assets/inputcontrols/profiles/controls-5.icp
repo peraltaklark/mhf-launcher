@@ -226,6 +226,22 @@
       "toggleSwitch": false,
       "text": "",
       "iconId": 0
+    },
+    {
+      "type": "BUTTON",
+      "shape": "ROUND_RECT",
+      "bindings": [
+        "SPECIAL_KEYBOARD",
+        "NONE",
+        "NONE",
+        "NONE"
+      ],
+      "scale": 1.2,
+      "x": 0.5,
+      "y": 0.15555556118488312,
+      "toggleSwitch": false,
+      "text": "KB",
+      "iconId": 0
     }
   ]
 }
