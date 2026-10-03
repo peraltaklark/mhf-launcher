@@ -374,6 +374,7 @@ public class ControlElement {
 
     private String getBindingTextAt(int index) {
         Binding binding = getBindingAt(index);
+        if (binding == com.winlator.cmod.inputcontrols.Binding.SPECIAL_KEYBOARD) return "⌨";
         String text = binding.toString().replace("NUMPAD ", "NP").replace("BUTTON ", "");
         if (text.length() > 7) {
             String[] parts = text.split(" ");
