@@ -32,9 +32,10 @@ public final class SocProfile {
     public static final String DRIVER_8GEN3 = "turnip26.3.0-oneui";
     public static final String DRIVER_A8XX = "turnip-a8xx-v31";
     public static final String DRIVER_A7XX = "turnip26.2.0-oneui-r8";
+    public static final String DRIVER_A7XX_LOW = "turnip-a710-a720-a77-v4";
     public static final String DRIVER_A6XX = "turnip26.2.0";
-    public static final String[] DRIVER_CHOICES = {DebugKt.DEBUG_PROPERTY_VALUE_AUTO, DRIVER_SYSTEM, "turnip-oneui7-8gen2", DRIVER_8GEN3, DRIVER_A8XX, DRIVER_A7XX, DRIVER_A6XX};
-    public static final String[] DRIVER_LABELS = {"Auto (by SoC)", "Others (MediaTek, Exynos, Unisoc, etc.)", "Turnip OneUI7 8Gen2 (Adreno 740)", "Turnip 26.3 OneUI (8 Gen 3 / A750)", "Turnip A8xx v31 (8 Elite / Elite Gen 5)", "Turnip 26.2 OneUI-R8 (A7xx)", "Turnip 26.2 generic (Adreno 6xx)"};
+    public static final String[] DRIVER_CHOICES = {DebugKt.DEBUG_PROPERTY_VALUE_AUTO, DRIVER_SYSTEM, "turnip-oneui7-8gen2", DRIVER_8GEN3, DRIVER_A8XX, DRIVER_A7XX, DRIVER_A7XX_LOW, DRIVER_A6XX};
+    public static final String[] DRIVER_LABELS = {"Auto (by SoC)", "Others (MediaTek, Exynos, Unisoc, etc.)", "Turnip OneUI7 8Gen2 (Adreno 740)", "Turnip 26.3 OneUI (8 Gen 3 / A750)", "Turnip A8xx v31 (8 Elite / Elite Gen 5)", "Turnip 26.2 OneUI-R8 (A7xx)", "Turnip A710/A720/A722 v4 (Adreno 710/720/722)", "Turnip 26.2 generic (Adreno 6xx)"};
     public static final String[] QUALITY_CHOICES = {DebugKt.DEBUG_PROPERTY_VALUE_AUTO, "flagship", "mid", "legacy"};
     public static final String[] QUALITY_LABELS = {"Auto quality", "Flagship (sharp 100)", "Mid (sharp 85)", "Legacy (sharp 75)"};
 
@@ -215,7 +216,7 @@ public final class SocProfile {
 
     public String buildEnvVars() {
         String env = "WINE_FAST_YIELD=1 WRAPPER_MAX_IMAGE_COUNT=0 VKD3D_SHADER_MODEL=6_6 MESA_SHADER_CACHE_DISABLE=false MESA_SHADER_CACHE_MAX_SIZE=512MB WINEESYNC=1 WINEDEBUG=-all DXVK_STATE_CACHE=1 DXVK_DISABLE_TIMELINE_SEMAPHORES=1 BOX64_DYNAREC_BIGBLOCK=1 BOX64_DYNAREC_STRONGMEM=0 BOX64_DYNAREC_SAFEFLAGS=2";
-        if (DRIVER_A8XX.equals(this.driverId)) {
+        if (DRIVER_A8XX.equals(this.driverId) || DRIVER_A7XX_LOW.equals(this.driverId)) {
             return env + " TU_DEBUG=sysmem";
         }
         return env;
@@ -283,7 +284,18 @@ public final class SocProfile {
                 if (!match(soc, "SM8750", "SM8735")) {
                     if (!match(soc, "SM8850", "SM8845")) {
                         if (!match(soc, "SM8450", "SM8475", "SM8350", "SM7450", "SM7475")) {
-                            if (match(soc, "SM8250", "SM8150", "SM7325", "SM7350", "SM7225", "SM7250", "SM7150", "SM7125", "SM7315", "SM6115", "SM6125", "SM6150", "SM6350", "SM6375", "SM6450", "SM6650", "SM6800", "SM6850", "SM6950", "SM6225", "SM4375", "QCM6490")) {
+
+                            // Snapdragon 7s Gen 3 (Adreno 810) — A8xx gen, sysmem only
+                            if (match(soc, "SM7635")) {
+                                return new Detected("Snapdragon 7s Gen 3 (Adreno 810)", Tier.MID, DRIVER_A8XX);
+                            }
+
+                            // Adreno 710 / 720 (Cortex-A710/A720 cores)
+                            if (match(soc, "SM6450", "SM6475", "SM7435", "SM7550")) {
+                                return new Detected("Snapdragon 6/7-series (Adreno 710/720)", Tier.MID, DRIVER_A7XX_LOW);
+                            }
+
+                            if (match(soc, "SM8250", "SM8150", "SM7325", "SM7350", "SM7225", "SM7250", "SM7150", "SM7125", "SM7315", "SM6115", "SM6125", "SM6150", "SM6350", "SM6375", "SM6650", "SM6800", "SM6850", "SM6950", "SM6225", "SM4375", "QCM6490")) {
                                 String name = match(soc, "SM8250") ? "Snapdragon 865 / 860 (Adreno 640)" : "Snapdragon 7-series / Adreno 6xx";
                                 return new Detected(name, Tier.LEGACY, DRIVER_A6XX);
                             }
